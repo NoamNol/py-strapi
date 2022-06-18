@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "strapi-client"
+name = "pystrapi"
 version = "2.5.0"
 description = "Work with Strapi from Python via REST API"
 authors = ["Pavel Roslovets <p.v.roslovets@gmail.com>"]
