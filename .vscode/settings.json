@@ -12,6 +12,12 @@
     "[python]": {
         "editor.formatOnSave": true,
     },
+    // Python tests
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
     // cSpell custom dictionary
     "cSpell.words": [
         "mccabe",

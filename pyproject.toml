@@ -25,6 +25,7 @@ pydocstyle = "*"
 toml = "*"
 prospector = {version = "^1.7.7", extras = ["with_mypy", "with_bandit"]}
 autopep8 = "^1.6.0"
+pytest = "^7.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
