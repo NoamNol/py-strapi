@@ -15,7 +15,7 @@ classifiers =[
     ]
 
 [tool.poetry.dependencies]
-python = ">=3.6"
+python = ">=3.7,<4.0"
 aiohttp = "*"
 
 [tool.poetry.dev-dependencies]
@@ -23,6 +23,7 @@ python-semantic-release = "*"
 lazydocs = "*"
 pydocstyle = "*"
 toml = "*"
+prospector = {version = "^1.7.7", extras = ["with_mypy", "with_bandit"]}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

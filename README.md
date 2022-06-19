@@ -32,6 +32,12 @@ asyncio.run(main())
 
 ## Development
 
+### Lint
+Run [prospector](https://prospector.landscape.io/):
+```
+prospector
+```
+
 ### Create new release
 
 Push changes to 'main' branch following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
