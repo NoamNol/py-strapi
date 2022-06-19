@@ -1,20 +1,18 @@
-from typing import Union, Optional, List, Tuple
+from typing import Any, Iterator, Union, Optional, List, Tuple
 import aiohttp
 
 
 class StrapiClient:
     """RESP API client for Strapi."""
 
-    baseurl: str = None
-    _token: str = None
-
     def __init__(self, baseurl: str) -> None:
         """Initialize client."""
         if not baseurl.endswith('/'):
             baseurl = baseurl + '/'
-        self.baseurl = baseurl
+        self.baseurl: str = baseurl
+        self._token: Optional[str] = None
 
-    async def authorize(self, identifier: str, password: str, token: str = None) -> None:
+    async def authorize(self, identifier: str, password: str, token: Optional[str] = None) -> None:
         """Set up or retrieve access token."""
         if not token:
             url = self.baseurl + 'api/auth/local'
@@ -49,7 +47,7 @@ class StrapiClient:
             async with session.get(url, headers=self._get_auth_header(), params=params) as res:
                 if res.status != 200:
                     raise Exception(f'Unable to get entry, error {res.status}: {res.reason}')
-                return await res.json()
+                return await res.json()  # type: ignore
 
     async def get_entries(
             self,
@@ -119,7 +117,7 @@ class StrapiClient:
             async with session.post(url, json=body, headers=self._get_auth_header()) as res:
                 if res.status != 200:
                     raise Exception(f'Unable to create entry, error {res.status}: {res.reason}')
-                return await res.json()
+                return await res.json()  # type: ignore
 
     async def update_entry(
             self,
@@ -136,7 +134,7 @@ class StrapiClient:
             async with session.put(url, json=body, headers=self._get_auth_header()) as res:
                 if res.status != 200:
                     raise Exception(f'Unable to update entry, error {res.status}: {res.reason}')
-                return await res.json()
+                return await res.json()  # type: ignore
 
     async def delete_entry(
             self,
@@ -149,7 +147,7 @@ class StrapiClient:
             async with session.delete(url, headers=self._get_auth_header()) as res:
                 if res.status != 200:
                     raise Exception(f'Unable to delete entry, error {res.status}: {res.reason}')
-                return await res.json()
+                return await res.json()  # type: ignore
 
     async def upsert_entry(
             self,
@@ -190,7 +188,7 @@ class StrapiClient:
             header = None
         return header
 
-    async def _get_entries(self, session, url, params) -> dict:
+    async def _get_entries(self, session, url, params) -> dict:  # type: ignore
         """Helper function to get entries."""
         async with session.get(
                 url,
@@ -200,13 +198,13 @@ class StrapiClient:
             if res.status != 200:
                 raise Exception(f'Unable to get entries, error {res.status}: {res.reason}')
             res_obj = await res.json()
-            return res_obj
+            return res_obj  # type: ignore
 
 
 def process_data(entry: dict) -> Union[dict, List[dict]]:
     """Process response with entries."""
     data: Union[dict, List[dict]] = entry['data']
-    if type(data) is list:
+    if isinstance(data, list):
         return [{'id': d['id'], **d['attributes']} for d in data]
     else:
         return {'id': data['id'], **data['attributes']}
@@ -216,22 +214,22 @@ def process_response(response: dict) -> Tuple[List[dict], dict]:
     """Process response with entries."""
     entries = process_data(response)
     pagination = response['meta']['pagination']
-    return entries, pagination
+    return entries, pagination  # type: ignore
 
 
-def _stringify_parameters(name: str, parameters: Union[dict, List[str], None]) -> dict:
+def _stringify_parameters(name: str, parameters: Union[dict, List[str], str, None]) -> dict:
     """Stringify dict for query parameters."""
-    if type(parameters) is dict:
+    if isinstance(parameters, dict):
         return {name + k: v for k, v in _flatten_parameters(parameters)}
-    elif type(parameters) is str:
+    elif isinstance(parameters, str):
         return {name: parameters}
-    elif type(parameters) is list:
+    elif isinstance(parameters, list):
         return {name: ','.join(parameters)}
     else:
         return {}
 
 
-def _flatten_parameters(parameters: dict):
+def _flatten_parameters(parameters: dict) -> Iterator[tuple[str, Any]]:
     """Flatten parameters dict for query."""
     for key, value in parameters.items():
         if isinstance(value, dict):

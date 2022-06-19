@@ -1,10 +1,12 @@
-from typing import Union, Optional, List
+# pylint: disable=unused-argument
+
+from typing import Optional, List
 import asyncio
 import platform
-from pystrapi import StrapiClient
+from .strapi_client import StrapiClient
 
 if platform.system() == 'Windows':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
 
 
 class StrapiClientSync:
@@ -16,7 +18,7 @@ class StrapiClientSync:
         """Initialize client."""
         self._strapi_client = StrapiClient(baseurl=baseurl)
 
-    def authorize(self, identifier: str, password: str, token: str = None) -> None:
+    def authorize(self, identifier: str, password: str, token: Optional[str] = None) -> None:
         """Set up or retrieve access token."""
         args = locals()
         del args['self']
