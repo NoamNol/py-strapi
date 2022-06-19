@@ -40,6 +40,8 @@ dodgy:
 
 bandit:
   run: true
+  options:
+    config: "bandit.yaml"
 
 # -- Disabled: -- #
 
