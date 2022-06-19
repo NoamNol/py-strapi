@@ -1,0 +1,53 @@
+# Prospector Docs: https://prospector.landscape.io/en/master/profiles.html
+
+output-format: text
+
+strictness: high
+test-warnings: true
+doc-warnings: false
+member-warnings: true
+autodetect: false
+
+inherits:
+  - default
+
+max-line-length: 120
+
+# -- Enabled: -- #
+
+pylint:
+  run: true
+  disable:
+    - invalid-name
+    - no-self-use
+    - wrong-import-order
+    - too-many-arguments
+    - too-many-locals
+    - no-else-return
+    - no-else-raise
+
+mypy:
+  run: true # config with mypy.ini
+
+pycodestyle:
+  run: true
+  disable:
+    - N801
+    - E305
+
+dodgy:
+  run: true
+
+bandit:
+  run: true
+
+# -- Disabled: -- #
+
+pyflakes:
+  run: false
+
+mccabe:
+  run: false
+
+pydocstyle:
+  run: false
