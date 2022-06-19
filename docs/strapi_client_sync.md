@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="../strapi_client/strapi_client_sync.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>module</kbd> `strapi_client_sync`
 
@@ -11,12 +11,12 @@
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L10"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L10"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `StrapiClientSync`
 RESP API client for Strapi. 
 
-<a href="../strapi_client/strapi_client_sync.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -31,7 +31,7 @@ Initialize client.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `authorize`
 
@@ -43,7 +43,7 @@ Set up or retrieve access token.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L56"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `create_entry`
 
@@ -55,7 +55,7 @@ Create entry.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L77"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L77"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `delete_entry`
 
@@ -67,7 +67,7 @@ Delete entry by id.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_entries`
 
@@ -89,7 +89,7 @@ Get list of entries. Optionally can operate in batch mode to get all entities au
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L27"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `get_entry`
 
@@ -106,7 +106,7 @@ Get entry by id.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `update_entry`
 
@@ -118,7 +118,7 @@ Update entry fields.
 
 ---
 
-<a href="../strapi_client/strapi_client_sync.py#L87"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../pystrapi/strapi_client_sync.py#L87"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `upsert_entry`
 
