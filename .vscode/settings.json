@@ -1,3 +1,20 @@
 {
-    "python.pythonPath": ".env/bin/python"
+    "python.pythonPath": ".env/bin/python",
+    // Python linter
+    "python.linting.prospectorEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.prospectorArgs": [
+        "--profile",
+        ".prospector.yaml"
+    ],
+    // Python formatter
+    "python.formatting.autopep8Args": ["--max-line-length", "200"],
+    "[python]": {
+        "editor.formatOnSave": true,
+    },
+    // cSpell custom dictionary
+    "cSpell.words": [
+        "mccabe",
+        "mypy",
+    ],
 }
