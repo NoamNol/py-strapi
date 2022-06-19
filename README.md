@@ -42,6 +42,3 @@ prospector
 
 Push changes to 'main' branch following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-### Update documentation
-
-`docs` folder is being updated automatically by GitHub Actions when source files are changed.

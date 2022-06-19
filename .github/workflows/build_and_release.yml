@@ -24,18 +24,18 @@ jobs:
             - name: 📦 Install poetry
               run: pip install poetry
 
-            - name: 📖 Generate docs
-              run: |
-                  poetry install
-                  poetry run lazydocs --validate pystrapi --overview-file README.md
-
-            - name: ⬆️ Commit generated docs
-              uses: EndBug/add-and-commit@v7
-              with:
-                  add: docs
-                  message: "doc: update"
-                  committer_name: GitHub Actions
-                  committer_email: actions@github.com
+            # There is a bug in lazydocs so it's disabled ("relative import with no known parent package"):
+            # - name: 📖 Generate docs
+            #   run: |
+            #       poetry install
+            #       poetry run lazydocs --validate pystrapi --overview-file README.md
+            # - name: ⬆️ Commit generated docs
+            #   uses: EndBug/add-and-commit@v7
+            #   with:
+            #       add: docs
+            #       message: "doc: update"
+            #       committer_name: GitHub Actions
+            #       committer_email: actions@github.com
 
             - name: 📢 Semantic Release
               uses: bjoluc/semantic-release-config-poetry@v1
