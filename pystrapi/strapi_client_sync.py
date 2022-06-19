@@ -1,7 +1,7 @@
 from typing import Union, Optional, List
 import asyncio
 import platform
-from .strapi_client import StrapiClient
+from pystrapi import StrapiClient
 
 if platform.system() == 'Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
