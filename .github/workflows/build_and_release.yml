@@ -5,7 +5,7 @@ on:
         branches:
             - main
         paths:
-            - strapi_client/**
+            - pystrapi/**
             - pyproject.toml
             - .github/**
 
@@ -27,7 +27,7 @@ jobs:
             - name: 📖 Generate docs
               run: |
                   poetry install
-                  poetry run lazydocs --validate strapi_client --overview-file README.md
+                  poetry run lazydocs --validate pystrapi --overview-file README.md
 
             - name: ⬆️ Commit generated docs
               uses: EndBug/add-and-commit@v7

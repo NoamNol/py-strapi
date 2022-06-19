@@ -1,11 +1,11 @@
-# Strapi Client
+# PyStrapi
 
 Work with Strapi from Python via REST API
 
 ## Install
 
 ```bash
-pip install strapi-client
+pip install pystrapi
 ```
 
 ## Documentation
@@ -18,7 +18,7 @@ Quick start:
 
 ```python
 import asyncio
-from strapi_client import StrapiClient
+from pystrapi import StrapiClient
 
 async def main():
     strapi = StrapiClient(strapi_url)
