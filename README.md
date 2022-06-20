@@ -12,10 +12,6 @@ Work with Strapi from Python via REST API
 pip install pystrapi
 ```
 
-## Documentation
-
-[Full API Reference](./docs)
-
 ## Examples
 
 Quick start:
