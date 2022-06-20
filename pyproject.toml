@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pystrapi"
-version = "3.0.0"
+version = "3.1.0"
 description = "Work with Strapi from Python via REST API"
 authors = ["Noam Nol <noamnol19@gmail.com>"]
 license = "MIT"
