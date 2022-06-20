@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [3.1.1](https://github.com/NoamNol/py-strapi/compare/v3.1.0...v3.1.1) (2022-06-20)
+
+
+### Bug Fixes
+
+* fix return type to support python 3.8 ([18a3a44](https://github.com/NoamNol/py-strapi/commit/18a3a44675f799baf084d8cbbcac75470face83b))
+
 ## [3.1.0](https://github.com/NoamNol/py-strapi/compare/v3.0.0...v3.1.0) (2022-06-20)
 
 
