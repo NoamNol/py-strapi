@@ -1,4 +1,8 @@
 # PyStrapi
+![CI](https://github.com/NoamNol/py-strapi/workflows/CI/badge.svg?event=push)
+![Build and release](https://github.com/NoamNol/py-strapi/workflows/%F0%9F%9A%80%20Build%20and%20release/badge.svg?event=push)
+[![PyPI version](https://badge.fury.io/py/pystrapi.svg)](https://pypi.org/project/pystrapi)
+![pyversions](https://img.shields.io/pypi/pyversions/pystrapi)
 
 Work with Strapi from Python via REST API
 
