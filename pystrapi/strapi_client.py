@@ -229,7 +229,7 @@ def _stringify_parameters(name: str, parameters: Union[dict, List[str], str, Non
         return {}
 
 
-def _flatten_parameters(parameters: dict) -> Iterator[tuple[str, Any]]:
+def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
     """Flatten parameters dict for query."""
     for key, value in parameters.items():
         if isinstance(value, dict):
