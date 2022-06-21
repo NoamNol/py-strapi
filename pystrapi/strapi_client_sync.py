@@ -157,7 +157,10 @@ class StrapiClientSync:
         if num > 1:
             raise ValueError(f"Keys are ambiguous, found {num} records")
         elif num == 1:
-            entry_id: int = current_rec["data"][0]["id"]
+            try:
+                entry_id: int = current_rec["data"][0]["id"]
+            except Exception:
+                raise Exception(f"Can't parse entry id of {current_rec}") from None
             return self.update_entry(plural_api_id=plural_api_id, document_id=entry_id, data=data)
         else:
             return self.create_entry(plural_api_id=plural_api_id, data=data)
