@@ -12,13 +12,17 @@ class StrapiClientSync:
         self, *,
         baseurl: Optional[str] = None,
         connector: Optional[StrapiConnectorSync] = None,
+        token: Optional[str] = None,
     ):
         """Initialize client."""
         baseurl = baseurl or "http://localhost:1337/api/"
         if not baseurl.endswith('/'):
             baseurl = baseurl + '/'
         self._connector = connector or DefaultStrapiConnectorSync(baseurl)
-        self._token: Optional[str] = None
+        self._token = token
+
+    def set_token(self, token: str) -> None:
+        self._token = token
 
     @property
     def baseurl(self) -> str:
