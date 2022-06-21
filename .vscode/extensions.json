@@ -4,7 +4,7 @@
 	"recommendations": [
 		// Required:
 		"ms-python.python",
-        "editorconfig.editorconfig",
+		"editorconfig.editorconfig",
 		// Recommended:
 		"eamodio.gitlens",
 		"streetsidesoftware.code-spell-checker",
