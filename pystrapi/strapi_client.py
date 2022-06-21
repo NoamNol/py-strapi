@@ -7,13 +7,16 @@ from .helpers import _stringify_parameters
 class StrapiClient:
     """RESP API client for Strapi."""
 
-    def __init__(self, *, baseurl: Optional[str] = None):
+    def __init__(self, *, baseurl: Optional[str] = None, token: Optional[str] = None):
         """Initialize client."""
         baseurl = baseurl or "http://localhost:1337/api/"
         if not baseurl.endswith('/'):
             baseurl = baseurl + '/'
         self.baseurl: str = baseurl
-        self._token: Optional[str] = None
+        self._token: Optional[str] = token
+
+    def set_token(self, token: str) -> None:
+        self._token = token
 
     async def authorize(self, identifier: str, password: str, token: Optional[str] = None) -> None:
         """Set up or retrieve access token."""
