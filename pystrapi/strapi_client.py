@@ -1,13 +1,19 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 import aiohttp
 
+from .parameters import PublicationState
+from .types import PaginationParameter, PopulationParameter, StrapiEntriesResponse, StrapiEntryResponse
 from .helpers import _stringify_parameters
 
 
 class StrapiClient:
     """RESP API client for Strapi."""
 
-    def __init__(self, *, baseurl: Optional[str] = None, token: Optional[str] = None):
+    def __init__(
+        self, *,
+        baseurl: Optional[str] = None,
+        token: Optional[str] = None
+    ):
         """Initialize client."""
         baseurl = baseurl or "http://localhost:1337/api/"
         if not baseurl.endswith('/'):
@@ -37,9 +43,9 @@ class StrapiClient:
             self,
             plural_api_id: str,
             document_id: int,
-            populate: Optional[List[str]] = None,
+            populate: Optional[PopulationParameter] = None,
             fields: Optional[List[str]] = None
-    ) -> dict:
+    ) -> StrapiEntryResponse:
         """Get entry by id."""
         populate_param = _stringify_parameters('populate', populate)
         fields_param = _stringify_parameters('fields', fields)
@@ -59,13 +65,13 @@ class StrapiClient:
             plural_api_id: str,
             sort: Optional[List[str]] = None,
             filters: Optional[dict] = None,
-            populate: Optional[List[str]] = None,
+            populate: Optional[PopulationParameter] = None,
             fields: Optional[List[str]] = None,
-            pagination: Optional[dict] = None,
-            publication_state: Optional[str] = None,
+            pagination: Optional[PaginationParameter] = None,
+            publication_state: Optional[Union[str, PublicationState]] = None,
             get_all: bool = False,
             batch_size: int = 100
-    ) -> dict:
+    ) -> StrapiEntriesResponse:
         """Get list of entries. Optionally can operate in batch mode to get all entries automatically."""
         sort_param = _stringify_parameters('sort', sort)
         filters_param = _stringify_parameters('filters', filters)
@@ -83,6 +89,7 @@ class StrapiClient:
             **publication_state_param
         }
         async with aiohttp.ClientSession() as session:
+            res_obj: StrapiEntriesResponse
             if not get_all:
                 res_obj = await self._get_entries(session, url, params)
                 return res_obj
@@ -101,18 +108,15 @@ class StrapiClient:
                     if page == 1:
                         res_obj = res_obj1
                     else:
-                        res_obj['data'] += res_obj1['data']
+                        if res_obj['data'] is not None and res_obj1['data'] is not None:
+                            res_obj['data'] += res_obj1['data']
                         res_obj['meta'] = res_obj1['meta']
                     page += 1
                     pages = res_obj['meta']['pagination']['pageCount']
                     get_more = page <= pages
                 return res_obj
 
-    async def create_entry(
-            self,
-            plural_api_id: str,
-            data: dict
-    ) -> dict:
+    async def create_entry(self, plural_api_id: str, data: dict) -> StrapiEntryResponse:
         """Create entry."""
         url = f'{self.baseurl}api/{plural_api_id}'
         body = {
@@ -125,11 +129,11 @@ class StrapiClient:
                 return await res.json()  # type: ignore
 
     async def update_entry(
-            self,
-            plural_api_id: str,
-            document_id: int,
-            data: dict
-    ) -> dict:
+        self,
+        plural_api_id: str,
+        document_id: int,
+        data: dict
+    ) -> StrapiEntryResponse:
         """Update entry fields."""
         url = f'{self.baseurl}api/{plural_api_id}/{document_id}'
         body = {
@@ -141,11 +145,7 @@ class StrapiClient:
                     raise Exception(f'Unable to update entry, error {res.status}: {res.reason}')
                 return await res.json()  # type: ignore
 
-    async def delete_entry(
-            self,
-            plural_api_id: str,
-            document_id: int
-    ) -> dict:
+    async def delete_entry(self, plural_api_id: str, document_id: int) -> StrapiEntryResponse:
         """Delete entry by id."""
         url = f'{self.baseurl}api/{plural_api_id}/{document_id}'
         async with aiohttp.ClientSession() as session:
@@ -155,11 +155,11 @@ class StrapiClient:
                 return await res.json()  # type: ignore
 
     async def upsert_entry(
-            self,
-            plural_api_id: str,
-            data: dict,
-            keys: List[str]
-    ) -> dict:
+        self,
+        plural_api_id: str,
+        data: dict,
+        keys: List[str]
+    ) -> StrapiEntryResponse:
         """Create entry or update fields."""
         filters = {}
         for key in keys:
@@ -175,7 +175,7 @@ class StrapiClient:
             raise ValueError(f'Keys are ambiguous, found {num} records')
         elif num == 1:
             try:
-                entry_id: int = current_rec['data'][0]['id']
+                entry_id: int = current_rec['data'][0]['id']  # type: ignore
             except Exception:
                 raise Exception(f"Can't parse entry id of {current_rec}") from None
             return await self.update_entry(
@@ -197,7 +197,7 @@ class StrapiClient:
             header = None
         return header
 
-    async def _get_entries(self, session, url, params) -> dict:  # type: ignore
+    async def _get_entries(self, session: aiohttp.ClientSession, url: str, params: dict) -> StrapiEntriesResponse:
         """Helper function to get entries."""
         async with session.get(
                 url,

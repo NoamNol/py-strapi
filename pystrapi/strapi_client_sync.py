@@ -1,8 +1,16 @@
 import requests
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .helpers import _stringify_parameters
+from .parameters import PublicationState
 from .strapi_connector_sync import DefaultStrapiConnectorSync, StrapiConnectorSync
+from .types import (
+    PaginationParameter,
+    PopulationParameter,
+    StrapiAuthResponse,
+    StrapiEntriesResponse,
+    StrapiEntryResponse,
+)
 
 
 class StrapiClientSync:
@@ -32,36 +40,37 @@ class StrapiClientSync:
         """Set up or retrieve access token."""
         endpoint = "auth/local"
         body = {"identifier": identifier, "password": password}
-        res_obj = self._connector.post(endpoint, reqargs=dict(data=body))
+        res_obj: StrapiAuthResponse = self._connector.post(endpoint, reqargs=dict(data=body))
         self._token = res_obj["jwt"]
 
     def get_entry(
-            self,
-            plural_api_id: str,
-            document_id: int,
-            populate: Optional[List[str]] = None,
-            fields: Optional[List[str]] = None
-    ) -> dict:
+        self,
+        plural_api_id: str,
+        document_id: int,
+        populate: Optional[PopulationParameter] = None,
+        fields: Optional[List[str]] = None,
+    ) -> StrapiEntryResponse:
         """Get entry by id."""
         populate_param = _stringify_parameters("populate", populate)
         fields_param = _stringify_parameters("fields", fields)
         params = {**populate_param, **fields_param}
         endpoint = f"{plural_api_id}/{document_id}"
-        res: dict = self._connector.get(endpoint, reqargs=dict(headers=self._get_auth_header(), params=params))
+        res: StrapiEntryResponse = self._connector.get(
+            endpoint, reqargs=dict(headers=self._get_auth_header(), params=params))
         return res
 
     def get_entries(
-            self,
-            plural_api_id: str,
-            sort: Optional[List[str]] = None,
-            filters: Optional[dict] = None,
-            populate: Optional[List[str]] = None,
-            fields: Optional[List[str]] = None,
-            pagination: Optional[dict] = None,
-            publication_state: Optional[str] = None,
-            get_all: bool = False,
-            batch_size: int = 100
-    ) -> dict:
+        self,
+        plural_api_id: str,
+        sort: Optional[List[str]] = None,
+        filters: Optional[dict] = None,
+        populate: Optional[PopulationParameter] = None,
+        fields: Optional[List[str]] = None,
+        pagination: Optional[PaginationParameter] = None,
+        publication_state: Optional[Union[str, PublicationState]] = None,
+        get_all: bool = False,
+        batch_size: int = 100,
+    ) -> StrapiEntriesResponse:
         """Get list of entries. Optionally can operate in batch mode to get all entries automatically."""
         sort_param = _stringify_parameters("sort", sort)
         filters_param = _stringify_parameters("filters", filters)
@@ -79,7 +88,7 @@ class StrapiClientSync:
             **publication_state_param,
         }
         if not get_all:
-            res: dict = self._connector.get(
+            res: StrapiEntriesResponse = self._connector.get(
                 endpoint, reqargs=dict(headers=self._get_auth_header(), params=params))
             return res
         else:
@@ -91,58 +100,42 @@ class StrapiClientSync:
                     pagination_param = _stringify_parameters("pagination", pagination)
                     for key in pagination_param:
                         params[key] = pagination_param[key]
-                    res_obj1: dict = self._connector.get(
+                    res_obj1: StrapiEntriesResponse = self._connector.get(
                         endpoint, session=session, reqargs=dict(headers=self._get_auth_header(), params=params)
                     )
+                    res_obj: StrapiEntriesResponse
                     if page == 1:
                         res_obj = res_obj1
                     else:
-                        res_obj["data"] += res_obj1["data"]
+                        if res_obj["data"] is not None and res_obj1["data"] is not None:
+                            res_obj["data"] += res_obj1["data"]
                         res_obj["meta"] = res_obj1["meta"]
                     page += 1
                     pages = res_obj["meta"]["pagination"]["pageCount"]
                     get_more = page <= pages
                 return res_obj
 
-    def create_entry(
-            self,
-            plural_api_id: str,
-            data: dict
-    ) -> dict:
+    def create_entry(self, plural_api_id: str, data: dict) -> StrapiEntryResponse:
         body = {"data": data}
-        res: dict = self._connector.post(
+        res: StrapiEntryResponse = self._connector.post(
             plural_api_id, reqargs=dict(headers=self._get_auth_header(), json=body))
         return res
 
-    def update_entry(
-            self,
-            plural_api_id: str,
-            document_id: int,
-            data: dict
-    ) -> dict:
+    def update_entry(self, plural_api_id: str, document_id: int, data: dict) -> StrapiEntryResponse:
         """Update entry fields."""
         endpoint = f"{plural_api_id}/{document_id}"
         body = {"data": data}
-        res: dict = self._connector.put(
+        res: StrapiEntryResponse = self._connector.put(
             endpoint, reqargs=dict(headers=self._get_auth_header(), json=body))
         return res
 
-    def delete_entry(
-            self,
-            plural_api_id: str,
-            document_id: int
-    ) -> dict:
+    def delete_entry(self, plural_api_id: str, document_id: int) -> StrapiEntryResponse:
         """Delete entry by id."""
         endpoint = f"{plural_api_id}/{document_id}"
-        res: dict = self._connector.delete(endpoint, reqargs=dict(headers=self._get_auth_header()))
+        res: StrapiEntryResponse = self._connector.delete(endpoint, reqargs=dict(headers=self._get_auth_header()))
         return res
 
-    def upsert_entry(
-            self,
-            plural_api_id: str,
-            data: dict,
-            keys: List[str]
-    ) -> dict:
+    def upsert_entry(self, plural_api_id: str, data: dict, keys: List[str]) -> StrapiEntryResponse:
         """Create entry or update fields."""
         filters = {}
         for key in keys:
@@ -158,7 +151,7 @@ class StrapiClientSync:
             raise ValueError(f"Keys are ambiguous, found {num} records")
         elif num == 1:
             try:
-                entry_id: int = current_rec["data"][0]["id"]
+                entry_id: int = current_rec["data"][0]["id"]  # type: ignore
             except Exception:
                 raise Exception(f"Can't parse entry id of {current_rec}") from None
             return self.update_entry(plural_api_id=plural_api_id, document_id=entry_id, data=data)
