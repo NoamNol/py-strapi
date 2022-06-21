@@ -1,24 +1,33 @@
+from typing import Any, Dict, Iterator, List, Mapping, Tuple, Union
 
-from typing import Any, Iterator, List, Tuple, Union
+from .types import StrapiEntryOrEntriesResponse, StrapiResponseEntryData, StrapiResponseMetaPagination
 
 
-def process_data(entry: dict) -> Union[dict, List[dict]]:
+def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
+    return {"id": entry["id"], **entry["attributes"]}
+
+
+def process_data(response: dict) -> Union[dict, List[dict]]:
     """Process response with entries."""
-    data: Union[dict, List[dict]] = entry['data']
+    response: StrapiEntryOrEntriesResponse = response  # type: ignore
+    if not response['data']:
+        return []
+    data = response['data']
     if isinstance(data, list):
-        return [{'id': d['id'], **d['attributes']} for d in data]
+        return [_add_id_to_attributes(d) for d in data]
     else:
-        return {'id': data['id'], **data['attributes']}
+        return _add_id_to_attributes(data)
 
 
-def process_response(response: dict) -> Tuple[Union[dict, List[dict]], dict]:
+def process_response(response: dict) -> Tuple[Union[dict, List[dict]], StrapiResponseMetaPagination]:
     """Process response with entries."""
+    response: StrapiEntryOrEntriesResponse = response  # type: ignore
     entries = process_data(response)
     pagination = response['meta']['pagination']
     return entries, pagination
 
 
-def _stringify_parameters(name: str, parameters: Union[dict, List[str], str, None]) -> dict:
+def _stringify_parameters(name: str, parameters: Union[str, Mapping, List[str], None]) -> Dict[str, Any]:
     """Stringify dict for query parameters."""
     if isinstance(parameters, dict):
         return {name + k: v for k, v in _flatten_parameters(parameters)}
