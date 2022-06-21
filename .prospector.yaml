@@ -25,6 +25,7 @@ pylint:
     - too-many-locals
     - no-else-return
     - no-else-raise
+    - broad-except
 
 mypy:
   run: true # config with mypy.ini
@@ -34,6 +35,7 @@ pycodestyle:
   disable:
     - N801
     - E305
+    - N815
 
 dodgy:
   run: true

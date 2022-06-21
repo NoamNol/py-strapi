@@ -8,7 +8,7 @@
         ".prospector.yaml"
     ],
     // Python formatter
-    "python.formatting.autopep8Args": ["--max-line-length", "200"],
+    "python.formatting.autopep8Args": ["--max-line-length", "120"],
     "[python]": {
         "editor.formatOnSave": true,
     },
@@ -20,7 +20,10 @@
     "python.testing.pytestEnabled": true,
     // cSpell custom dictionary
     "cSpell.words": [
+        "aiohttp",
         "mccabe",
         "mypy",
+        "pystrapi",
+        "strapi",
     ],
 }
