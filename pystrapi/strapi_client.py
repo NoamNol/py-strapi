@@ -174,9 +174,13 @@ class StrapiClient:
         if num > 1:
             raise ValueError(f'Keys are ambiguous, found {num} records')
         elif num == 1:
+            try:
+                entry_id: int = current_rec['data'][0]['id']
+            except Exception:
+                raise Exception(f"Can't parse entry id of {current_rec}") from None
             return await self.update_entry(
                 plural_api_id=plural_api_id,
-                document_id=current_rec['data'][0]['id'],
+                document_id=entry_id,
                 data=data
             )
         else:
