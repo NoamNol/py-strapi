@@ -28,13 +28,12 @@ class StrapiClientSync:
     def baseurl(self) -> str:
         return self._connector.api_url
 
-    def authorize(self, identifier: str, password: str, token: Optional[str] = None) -> None:
+    def authorize(self, *, identifier: str, password: str) -> None:
         """Set up or retrieve access token."""
-        if not token:
-            endpoint = "auth/local"
-            body = {"identifier": identifier, "password": password}
-            res_obj = self._connector.post(endpoint, reqargs=dict(data=body))
-            self._token = res_obj["jwt"]
+        endpoint = "auth/local"
+        body = {"identifier": identifier, "password": password}
+        res_obj = self._connector.post(endpoint, reqargs=dict(data=body))
+        self._token = res_obj["jwt"]
 
     def get_entry(
             self,

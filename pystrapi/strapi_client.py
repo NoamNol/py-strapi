@@ -18,21 +18,20 @@ class StrapiClient:
     def set_token(self, token: str) -> None:
         self._token = token
 
-    async def authorize(self, identifier: str, password: str, token: Optional[str] = None) -> None:
+    async def authorize(self, *, identifier: str, password: str) -> None:
         """Set up or retrieve access token."""
-        if not token:
-            url = self.baseurl + 'api/auth/local'
-            body = {
-                'identifier': identifier,
-                'password': password
-            }
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, json=body) as res:
-                    if res.status != 200:
-                        raise Exception(f'Unable to authorize, error {res.status}: {res.reason}')
-                    res_obj = await res.json()
-                    token = res_obj['jwt']
-                self._token = token
+        url = self.baseurl + 'api/auth/local'
+        body = {
+            'identifier': identifier,
+            'password': password
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=body) as res:
+                if res.status != 200:
+                    raise Exception(f'Unable to authorize, error {res.status}: {res.reason}')
+                res_obj = await res.json()
+                token = res_obj['jwt']
+            self._token = token
 
     async def get_entry(
             self,
