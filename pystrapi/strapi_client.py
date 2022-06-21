@@ -1,12 +1,15 @@
-from typing import Any, Iterator, Union, Optional, List, Tuple
+from typing import Optional, List
 import aiohttp
+
+from .helpers import _stringify_parameters
 
 
 class StrapiClient:
     """RESP API client for Strapi."""
 
-    def __init__(self, baseurl: str) -> None:
+    def __init__(self, *, baseurl: Optional[str] = None):
         """Initialize client."""
+        baseurl = baseurl or "http://localhost:1337/api/"
         if not baseurl.endswith('/'):
             baseurl = baseurl + '/'
         self.baseurl: str = baseurl
@@ -199,41 +202,3 @@ class StrapiClient:
                 raise Exception(f'Unable to get entries, error {res.status}: {res.reason}')
             res_obj = await res.json()
             return res_obj  # type: ignore
-
-
-def process_data(entry: dict) -> Union[dict, List[dict]]:
-    """Process response with entries."""
-    data: Union[dict, List[dict]] = entry['data']
-    if isinstance(data, list):
-        return [{'id': d['id'], **d['attributes']} for d in data]
-    else:
-        return {'id': data['id'], **data['attributes']}
-
-
-def process_response(response: dict) -> Tuple[List[dict], dict]:
-    """Process response with entries."""
-    entries = process_data(response)
-    pagination = response['meta']['pagination']
-    return entries, pagination  # type: ignore
-
-
-def _stringify_parameters(name: str, parameters: Union[dict, List[str], str, None]) -> dict:
-    """Stringify dict for query parameters."""
-    if isinstance(parameters, dict):
-        return {name + k: v for k, v in _flatten_parameters(parameters)}
-    elif isinstance(parameters, str):
-        return {name: parameters}
-    elif isinstance(parameters, list):
-        return {name: ','.join(parameters)}
-    else:
-        return {}
-
-
-def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
-    """Flatten parameters dict for query."""
-    for key, value in parameters.items():
-        if isinstance(value, dict):
-            for key1, value1 in _flatten_parameters(value):
-                yield f'[{key}]{key1}', value1
-        else:
-            yield f'[{key}]', value
