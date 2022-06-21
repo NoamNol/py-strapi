@@ -21,9 +21,11 @@
     // cSpell custom dictionary
     "cSpell.words": [
         "aiohttp",
+        "getattrs",
         "mccabe",
         "mypy",
         "pystrapi",
+        "reqargs",
         "strapi",
     ],
 }
