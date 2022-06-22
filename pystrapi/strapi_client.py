@@ -11,14 +11,14 @@ class StrapiClient:
 
     def __init__(
         self, *,
-        baseurl: Optional[str] = None,
+        api_url: Optional[str] = None,
         token: Optional[str] = None
     ):
         """Initialize client."""
-        baseurl = baseurl or "http://localhost:1337/api/"
-        if not baseurl.endswith('/'):
-            baseurl = baseurl + '/'
-        self.baseurl: str = baseurl
+        api_url = api_url or "http://localhost:1337/api/"
+        if not api_url.endswith('/'):
+            api_url = api_url + '/'
+        self.api_url: str = api_url
         self._token: Optional[str] = token
 
     def set_token(self, token: str) -> None:
@@ -26,7 +26,7 @@ class StrapiClient:
 
     async def authorize(self, *, identifier: str, password: str) -> None:
         """Set up or retrieve access token."""
-        url = self.baseurl + 'api/auth/local'
+        url = self.api_url + 'api/auth/local'
         body = {
             'identifier': identifier,
             'password': password
@@ -53,7 +53,7 @@ class StrapiClient:
             **populate_param,
             **fields_param
         }
-        url = f'{self.baseurl}api/{plural_api_id}/{document_id}'
+        url = f'{self.api_url}api/{plural_api_id}/{document_id}'
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._get_auth_header(), params=params) as res:
                 if res.status != 200:
@@ -79,7 +79,7 @@ class StrapiClient:
         fields_param = _stringify_parameters('fields', fields)
         pagination_param = _stringify_parameters('pagination', pagination)
         publication_state_param = _stringify_parameters('publicationState', publication_state)
-        url = f'{self.baseurl}api/{plural_api_id}'
+        url = f'{self.api_url}api/{plural_api_id}'
         params = {
             **sort_param,
             **filters_param,
@@ -118,7 +118,7 @@ class StrapiClient:
 
     async def create_entry(self, plural_api_id: str, data: dict) -> StrapiEntryResponse:
         """Create entry."""
-        url = f'{self.baseurl}api/{plural_api_id}'
+        url = f'{self.api_url}api/{plural_api_id}'
         body = {
             'data': data
         }
@@ -135,7 +135,7 @@ class StrapiClient:
         data: dict
     ) -> StrapiEntryResponse:
         """Update entry fields."""
-        url = f'{self.baseurl}api/{plural_api_id}/{document_id}'
+        url = f'{self.api_url}api/{plural_api_id}/{document_id}'
         body = {
             'data': data
         }
@@ -147,7 +147,7 @@ class StrapiClient:
 
     async def delete_entry(self, plural_api_id: str, document_id: int) -> StrapiEntryResponse:
         """Delete entry by id."""
-        url = f'{self.baseurl}api/{plural_api_id}/{document_id}'
+        url = f'{self.api_url}api/{plural_api_id}/{document_id}'
         async with aiohttp.ClientSession() as session:
             async with session.delete(url, headers=self._get_auth_header()) as res:
                 if res.status != 200:
