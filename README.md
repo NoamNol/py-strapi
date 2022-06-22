@@ -21,7 +21,7 @@ import asyncio
 from pystrapi import StrapiClient
 
 async def main():
-    strapi = StrapiClient(strapi_url)
+    strapi = StrapiClient(api_url=strapi_url)
     await strapi.authorize(your_identifier, your_password) # optional
     users = await strapi.get_entries('users', filters={'username': {'$eq': 'Pavel'}})
     user_id = users['data'][0]['id']
