@@ -14,7 +14,11 @@ from .types import (
 
 
 class StrapiClientSync:
-    """RESP API client for Strapi."""
+    """REST API client for Strapi.
+
+    Strapi docs:
+    https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest-api.html
+    """
 
     def __init__(
         self, *,
@@ -22,7 +26,6 @@ class StrapiClientSync:
         connector: Optional[StrapiConnectorSync] = None,
         token: Optional[str] = None,
     ):
-        """Initialize client."""
         api_url = api_url or "http://localhost:1337/api/"
         if not api_url.endswith('/'):
             api_url = api_url + '/'
@@ -37,7 +40,13 @@ class StrapiClientSync:
         return self._connector.api_url
 
     def authorize(self, *, identifier: str, password: str) -> None:
-        """Set up or retrieve access token."""
+        """Set up or retrieve access token.
+
+        See https://docs.strapi.io/developer-docs/latest/guides/auth-request.html
+
+        Usage:
+        >>> client.authorize(identifier="author@strapi.io", password="strapi")
+        """
         endpoint = "auth/local"
         body = {"identifier": identifier, "password": password}
         res_obj: StrapiAuthResponse = self._connector.post(endpoint, reqargs=dict(data=body))
@@ -53,7 +62,13 @@ class StrapiClientSync:
         populate: Optional[PopulationParameter] = None,
         fields: Optional[List[str]] = None,
     ) -> StrapiEntryResponse:
-        """Get entry by id."""
+        """Get one entry by id.
+
+        Usage:
+        >>> client.get_entry('posts', 123)
+        >>> client.get_entry('posts', 123, populate="*")
+        >>> client.get_entry('posts', 123, fields=["description"])
+        """
         populate_param = _stringify_parameters("populate", populate)
         fields_param = _stringify_parameters("fields", fields)
         params = {**populate_param, **fields_param}
@@ -74,7 +89,23 @@ class StrapiClientSync:
         get_all: bool = False,
         batch_size: int = 100,
     ) -> StrapiEntriesResponse:
-        """Get list of entries. Optionally can operate in batch mode to get all entries automatically."""
+        """Get list of entries.
+        Optionally can operate in batch mode (if get_all is True) to get all entries with pagination
+
+        Usage:
+        >>> client.get_entries('posts')
+        >>> client.get_entries('posts', get_all=True)
+        >>> client.get_entries('disks', sort=["name"])
+        >>> client.get_entries('disks', sort=["name:desc"])
+        >>> client.get_entries('posts', filters={"name": {"$eq": "The Name"}})
+        >>> client.get_entries('posts', filters={"name": {Filter.eq: "The Name"}})
+        >>> client.get_entries('posts', populate="*")
+        >>> client.get_entries('posts', populate=["colors", "author"])
+        >>> client.get_entries('posts', populate={"colors": {"populate": "colorAnimation"}, "author": "*"})
+        >>> client.get_entries('posts', fields=["description"])
+        >>> client.get_entries('posts', pagination={"limit": 3})
+        >>> client.get_entries('posts', publication_state=PublicationState.preview)
+        """
         sort_param = _stringify_parameters("sort", sort)
         filters_param = _stringify_parameters("filters", filters)
         populate_param = _stringify_parameters("populate", populate)
@@ -119,13 +150,22 @@ class StrapiClientSync:
                 return res_obj
 
     def create_entry(self, plural_api_id: str, data: dict) -> StrapiEntryResponse:
+        """Create new entry.
+
+        Usage:
+        >>> client.create_entry("posts", {"name": "The Name"})
+        """
         body = {"data": data}
         res: StrapiEntryResponse = self._connector.post(
             plural_api_id, reqargs=dict(headers=self._get_auth_header(), json=body))
         return res
 
     def update_entry(self, plural_api_id: str, document_id: int, data: dict) -> StrapiEntryResponse:
-        """Update entry fields."""
+        """Update entry fields.
+
+        Usage:
+        >>> client.update_entry("posts", 123, {"name": "New Name"})
+        """
         endpoint = f"{plural_api_id}/{document_id}"
         body = {"data": data}
         res: StrapiEntryResponse = self._connector.put(
@@ -133,13 +173,23 @@ class StrapiClientSync:
         return res
 
     def delete_entry(self, plural_api_id: str, document_id: int) -> StrapiEntryResponse:
-        """Delete entry by id."""
+        """Delete entry by id.
+
+        Usage:
+        >>> client.delete_entry("posts", 123)
+        """
         endpoint = f"{plural_api_id}/{document_id}"
         res: StrapiEntryResponse = self._connector.delete(endpoint, reqargs=dict(headers=self._get_auth_header()))
         return res
 
     def upsert_entry(self, plural_api_id: str, data: dict, keys: List[str]) -> StrapiEntryResponse:
-        """Create entry or update fields."""
+        """Create entry or update fields.
+
+        Raise `ValueError` if more than one matching entry was found.
+
+        Usage:
+        >>> client.upsert_entry('posts', {"name": "Unique Name", "description": "blabla"}, ['name'])
+        """
         filters = {}
         for key in keys:
             filters[key] = {"$eq": data[key]}
@@ -162,7 +212,7 @@ class StrapiClientSync:
             return self.create_entry(plural_api_id=plural_api_id, data=data)
 
     def _get_auth_header(self) -> Optional[dict]:
-        """Compose auth header from token."""
+        """Compose auth header from token"""
         if self._token:
             header = {'Authorization': 'Bearer ' + self._token}
         else:
