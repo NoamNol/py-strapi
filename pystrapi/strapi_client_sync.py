@@ -41,7 +41,10 @@ class StrapiClientSync:
         endpoint = "auth/local"
         body = {"identifier": identifier, "password": password}
         res_obj: StrapiAuthResponse = self._connector.post(endpoint, reqargs=dict(data=body))
-        self._token = res_obj["jwt"]
+        if "jwt" in res_obj and res_obj["jwt"]:
+            self._token = res_obj["jwt"]
+        else:
+            raise Exception("No JWT token in response")
 
     def get_entry(
         self,

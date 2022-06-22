@@ -36,8 +36,10 @@ class StrapiClient:
                 if res.status != 200:
                     raise Exception(f'Unable to authorize, error {res.status}: {res.reason}')
                 res_obj = await res.json()
-                token = res_obj['jwt']
-            self._token = token
+                if 'jwt' in res_obj and res_obj['jwt']:
+                    self._token = res_obj['jwt']
+                else:
+                    raise Exception('No JWT token in response')
 
     async def get_entry(
             self,
