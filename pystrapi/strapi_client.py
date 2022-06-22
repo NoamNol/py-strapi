@@ -7,14 +7,17 @@ from .helpers import _stringify_parameters
 
 
 class StrapiClient:
-    """RESP API client for Strapi."""
+    """REST API client for Strapi.
+
+    Strapi docs:
+    https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest-api.html
+    """
 
     def __init__(
         self, *,
         api_url: Optional[str] = None,
         token: Optional[str] = None
     ):
-        """Initialize client."""
         api_url = api_url or "http://localhost:1337/api/"
         if not api_url.endswith('/'):
             api_url = api_url + '/'
@@ -25,7 +28,13 @@ class StrapiClient:
         self._token = token
 
     async def authorize(self, *, identifier: str, password: str) -> None:
-        """Set up or retrieve access token."""
+        """Set up or retrieve access token.
+
+        See https://docs.strapi.io/developer-docs/latest/guides/auth-request.html
+
+        Usage:
+        >>> client.authorize(identifier="author@strapi.io", password="strapi")
+        """
         url = self.api_url + 'api/auth/local'
         body = {
             'identifier': identifier,
@@ -42,13 +51,19 @@ class StrapiClient:
                     raise Exception('No JWT token in response')
 
     async def get_entry(
-            self,
-            plural_api_id: str,
-            document_id: int,
-            populate: Optional[PopulationParameter] = None,
-            fields: Optional[List[str]] = None
+        self,
+        plural_api_id: str,
+        document_id: int,
+        populate: Optional[PopulationParameter] = None,
+        fields: Optional[List[str]] = None
     ) -> StrapiEntryResponse:
-        """Get entry by id."""
+        """Get one entry by id.
+
+        Usage:
+        >>> client.get_entry('posts', 123)
+        >>> client.get_entry('posts', 123, populate="*")
+        >>> client.get_entry('posts', 123, fields=["description"])
+        """
         populate_param = _stringify_parameters('populate', populate)
         fields_param = _stringify_parameters('fields', fields)
         params = {
@@ -63,18 +78,34 @@ class StrapiClient:
                 return await res.json()  # type: ignore
 
     async def get_entries(
-            self,
-            plural_api_id: str,
-            sort: Optional[List[str]] = None,
-            filters: Optional[dict] = None,
-            populate: Optional[PopulationParameter] = None,
-            fields: Optional[List[str]] = None,
-            pagination: Optional[PaginationParameter] = None,
-            publication_state: Optional[Union[str, PublicationState]] = None,
-            get_all: bool = False,
-            batch_size: int = 100
+        self,
+        plural_api_id: str,
+        sort: Optional[List[str]] = None,
+        filters: Optional[dict] = None,
+        populate: Optional[PopulationParameter] = None,
+        fields: Optional[List[str]] = None,
+        pagination: Optional[PaginationParameter] = None,
+        publication_state: Optional[Union[str, PublicationState]] = None,
+        get_all: bool = False,
+        batch_size: int = 100
     ) -> StrapiEntriesResponse:
-        """Get list of entries. Optionally can operate in batch mode to get all entries automatically."""
+        """Get list of entries.
+        Optionally can operate in batch mode (if get_all is True) to get all entries with pagination
+
+        Usage:
+        >>> client.get_entries('posts')
+        >>> client.get_entries('posts', get_all=True)
+        >>> client.get_entries('disks', sort=["name"])
+        >>> client.get_entries('disks', sort=["name:desc"])
+        >>> client.get_entries('posts', filters={"name": {"$eq": "The Name"}})
+        >>> client.get_entries('posts', filters={"name": {Filter.eq: "The Name"}})
+        >>> client.get_entries('posts', populate="*")
+        >>> client.get_entries('posts', populate=["colors", "author"])
+        >>> client.get_entries('posts', populate={"colors": {"populate": "colorAnimation"}, "author": "*"})
+        >>> client.get_entries('posts', fields=["description"])
+        >>> client.get_entries('posts', pagination={"limit": 3})
+        >>> client.get_entries('posts', publication_state=PublicationState.preview)
+        """
         sort_param = _stringify_parameters('sort', sort)
         filters_param = _stringify_parameters('filters', filters)
         populate_param = _stringify_parameters('populate', populate)
@@ -119,7 +150,11 @@ class StrapiClient:
                 return res_obj
 
     async def create_entry(self, plural_api_id: str, data: dict) -> StrapiEntryResponse:
-        """Create entry."""
+        """Create new entry.
+
+        Usage:
+        >>> client.create_entry("posts", {"name": "The Name"})
+        """
         url = f'{self.api_url}api/{plural_api_id}'
         body = {
             'data': data
@@ -136,7 +171,11 @@ class StrapiClient:
         document_id: int,
         data: dict
     ) -> StrapiEntryResponse:
-        """Update entry fields."""
+        """Update entry fields.
+
+        Usage:
+        >>> client.update_entry("posts", 123, {"name": "New Name"})
+        """
         url = f'{self.api_url}api/{plural_api_id}/{document_id}'
         body = {
             'data': data
@@ -148,7 +187,11 @@ class StrapiClient:
                 return await res.json()  # type: ignore
 
     async def delete_entry(self, plural_api_id: str, document_id: int) -> StrapiEntryResponse:
-        """Delete entry by id."""
+        """Delete entry by id.
+
+        Usage:
+        >>> client.delete_entry("posts", 123)
+        """
         url = f'{self.api_url}api/{plural_api_id}/{document_id}'
         async with aiohttp.ClientSession() as session:
             async with session.delete(url, headers=self._get_auth_header()) as res:
@@ -162,7 +205,13 @@ class StrapiClient:
         data: dict,
         keys: List[str]
     ) -> StrapiEntryResponse:
-        """Create entry or update fields."""
+        """Create entry or update fields.
+
+        Raise `ValueError` if more than one matching entry was found.
+
+        Usage:
+        >>> client.upsert_entry('posts', {"name": "Unique Name", "description": "blabla"}, ['name'])
+        """
         filters = {}
         for key in keys:
             filters[key] = {'$eq': data[key]}

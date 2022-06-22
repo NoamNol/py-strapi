@@ -8,7 +8,18 @@ def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
 
 
 def process_data(response: dict) -> Union[dict, List[dict]]:
-    """Process response with entries."""
+    """Process response with entries.
+
+    Usage:
+    >>> process_data(sync_client.get_entry('posts', 1))
+    {"id": 1, "name": "post1", "description": "..."}
+
+    >>> process_data(sync_client.get_entries('posts'))
+    [
+        {"id": 1, "name": "post1", "description": "..."},
+        {"id": 2, "name": "post2", "description": "..."},
+    ]
+    """
     response: StrapiEntryOrEntriesResponse = response  # type: ignore
     if not response['data']:
         return []
@@ -20,7 +31,7 @@ def process_data(response: dict) -> Union[dict, List[dict]]:
 
 
 def process_response(response: dict) -> Tuple[Union[dict, List[dict]], StrapiResponseMetaPagination]:
-    """Process response with entries."""
+    """Process response with entries"""
     response: StrapiEntryOrEntriesResponse = response  # type: ignore
     entries = process_data(response)
     pagination = response['meta']['pagination']
@@ -28,7 +39,7 @@ def process_response(response: dict) -> Tuple[Union[dict, List[dict]], StrapiRes
 
 
 def _stringify_parameters(name: str, parameters: Union[str, Mapping, List[str], None]) -> Dict[str, Any]:
-    """Stringify dict for query parameters."""
+    """Stringify dict for query parameters"""
     if isinstance(parameters, dict):
         return {name + k: v for k, v in _flatten_parameters(parameters)}
     elif isinstance(parameters, str):
@@ -40,7 +51,7 @@ def _stringify_parameters(name: str, parameters: Union[str, Mapping, List[str], 
 
 
 def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
-    """Flatten parameters dict for query."""
+    """Flatten parameters dict for query"""
     for key, value in parameters.items():
         if isinstance(value, dict):
             for key1, value1 in _flatten_parameters(value):
