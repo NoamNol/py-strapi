@@ -8,6 +8,13 @@ npm ci
 npm install
 ```
 
+### Prepare data
+```
+mkdir .tmp
+cp testdata/data.db .tmp/
+```
+
+
 ### Run
 ```
 npm run develop
