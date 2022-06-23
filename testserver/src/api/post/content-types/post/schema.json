@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "description": {
+      "type": "text"
+    },
+    "content": {
+      "type": "text"
+    },
+    "title": {
+      "type": "string",
+      "unique": true,
+      "minLength": 2,
+      "required": true
+    }
+  }
+}

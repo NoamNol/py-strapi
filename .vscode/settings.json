@@ -27,5 +27,6 @@
         "pystrapi",
         "reqargs",
         "strapi",
+        "testdata"
     ],
 }
