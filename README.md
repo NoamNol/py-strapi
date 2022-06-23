@@ -31,11 +31,26 @@ asyncio.run(main())
 ```
 
 ## Development
+### Install environment:
+```
+poetry install
+```
 
 ### Lint
 Run [prospector](https://prospector.landscape.io/):
 ```
 prospector
+```
+
+### Unit tests
+```
+pytest test/unittests
+```
+
+### Integration tests
+Run Strapi test server (see [instructions](testserver/README.md)), and run integration tests:
+```
+pytest test/integration
 ```
 
 ### Create new release
