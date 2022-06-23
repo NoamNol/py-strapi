@@ -21,12 +21,17 @@
     // cSpell custom dictionary
     "cSpell.words": [
         "aiohttp",
+        "asyncio",
+        "asyncutils",
         "getattrs",
         "mccabe",
         "mypy",
+        "pydash",
         "pystrapi",
+        "pytest",
         "reqargs",
         "strapi",
-        "testdata"
+        "testdata",
+        "testserver"
     ],
 }
