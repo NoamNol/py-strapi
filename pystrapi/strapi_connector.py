@@ -36,7 +36,11 @@ class DefaultStrapiConnector(StrapiConnector):
             try:
                 async with session.request(method=method, url=url, **reqargs) as response:
                     if not response.ok:
-                        raise Exception(f"Unable to {method}, status code: {response.status}, text: {response.reason}")
+                        try:
+                            text: Any = await response.text()
+                        except Exception:
+                            text = response.reason
+                        raise Exception(f"Unable to {method}, status code: {response.status}, text: {text}")
                     return await response.json()
             except Exception as e:
                 raise Exception(f"Unable to {method}, error: {e})") from e
