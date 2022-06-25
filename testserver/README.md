@@ -25,3 +25,6 @@ npm run start
 ### More info:
 **Admin user:**  
 First name: `strapi`, Last name: `strapi`, Email: `strapi@test.com`, Password: `Strapi123`.
+
+**Test user:**  
+username: `strapi1_authenticated`, email: `strapi1@test.com`, password: `strapi`.

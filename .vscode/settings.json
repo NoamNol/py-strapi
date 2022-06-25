@@ -27,11 +27,14 @@
         "mccabe",
         "mypy",
         "pydash",
+        "PYPI",
+        "pyproject",
         "pystrapi",
         "pytest",
         "reqargs",
         "strapi",
         "testdata",
-        "testserver"
+        "testserver",
+        "unittests"
     ],
 }
