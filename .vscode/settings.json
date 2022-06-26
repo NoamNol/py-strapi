@@ -21,6 +21,7 @@
     // cSpell custom dictionary
     "cSpell.words": [
         "aiohttp",
+        "asvalue",
         "asyncio",
         "asyncutils",
         "getattrs",

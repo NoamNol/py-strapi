@@ -4,7 +4,7 @@ import pytest
 from typing import Any, Type
 
 from test.types import AnyStrapiClient
-from test.utils import asyncutils
+from test.utils.asyncutils import asvalue
 from pystrapi.strapi_client import StrapiClient
 from pystrapi.strapi_client_sync import StrapiClientSync
 
@@ -17,8 +17,7 @@ def client(request: Any) -> AnyStrapiClient:
 
 @pytest.fixture
 async def auth_client(client: AnyStrapiClient) -> AnyStrapiClient:
-    await asyncutils.value(
-        client.authorize(identifier='strapi1@test.com', password='strapi'))  # nosec
+    await asvalue(client.authorize(identifier='strapi1@test.com', password='strapi'))  # nosec
     return client
 
 
