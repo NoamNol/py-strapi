@@ -3,7 +3,7 @@ from typing import Any, Protocol
 import aiohttp
 
 
-class StrapiConnector(Protocol):
+class Connector(Protocol):
     api_url: str
 
     @abstractmethod
@@ -23,8 +23,8 @@ class StrapiConnector(Protocol):
         """Send HTTP DELETE request and load response text as json"""
 
 
-class DefaultStrapiConnector(StrapiConnector):
-    """Default strapi connector. Used if no custom connector was given"""
+class DefaultConnector(Connector):
+    """Default connector. Used if no custom connector was given"""
 
     def __init__(self, api_url: str):
         self.api_url = api_url
