@@ -22,7 +22,6 @@ urllib3 = "^1.26.9" # to fix python 3.10 support
 
 [tool.poetry.dev-dependencies]
 python-semantic-release = "*"
-lazydocs = "*"
 pydocstyle = "*"
 toml = "*"
 prospector = {version = "^1.7.7", extras = ["with_mypy", "with_bandit"]}
