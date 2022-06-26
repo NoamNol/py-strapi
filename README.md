@@ -33,6 +33,8 @@ asyncio.run(main())
 ## Development
 ### Install environment:
 ```
+python -m venv .env
+source .env/bin/activate
 poetry install
 ```
 
