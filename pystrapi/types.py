@@ -72,6 +72,3 @@ class PaginationParameterByOffset(TypedDict):
 
 PaginationParameter = Union[PaginationParameterByPage, PaginationParameterByOffset]
 PopulationParameter = Union[str, List[str], Dict[str, Any]]
-
-
-RequestKwargs = Dict[str, Any]
