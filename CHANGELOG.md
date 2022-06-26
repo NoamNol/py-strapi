@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/NoamNol/py-strapi/compare/v4.0.0...v4.1.0) (2022-06-26)
+
+
+### Features
+
+* rename StrapiConnector to Connector ([01037de](https://github.com/NoamNol/py-strapi/commit/01037dec304a1a85d0f761bd197350ea7c203f6d))
+
 ## [4.0.0](https://github.com/NoamNol/py-strapi/compare/v3.1.1...v4.0.0) (2022-06-25)
 
 
