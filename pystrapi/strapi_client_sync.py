@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 from .helpers import _stringify_parameters
 from .parameters import PublicationState
-from .strapi_connector_sync import DefaultConnectorSync, ConnectorSync
+from .connector_sync import DefaultConnectorSync, ConnectorSync
 from .types import (
     PaginationParameter,
     PopulationParameter,
