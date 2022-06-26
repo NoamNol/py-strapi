@@ -6,7 +6,7 @@ import requests
 from ._utils import getattrs_safe
 
 
-class StrapiConnectorSync(Protocol):
+class ConnectorSync(Protocol):
     api_url: str
 
     @abstractmethod
@@ -26,8 +26,8 @@ class StrapiConnectorSync(Protocol):
         """Send HTTP DELETE request and load response text as json"""
 
 
-class DefaultStrapiConnectorSync(StrapiConnectorSync):
-    """Default strapi connector. Used if no custom connector was given"""
+class DefaultConnectorSync(ConnectorSync):
+    """Default connector. Used if no custom connector was given"""
 
     def __init__(self, api_url: str):
         self.api_url = api_url
