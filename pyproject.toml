@@ -18,7 +18,6 @@ classifiers =[
 python = ">=3.8,<4.0"
 aiohttp = "*"
 requests = "^2.25.0"
-urllib3 = "^1.26.9" # to fix python 3.10 support
 
 [tool.poetry.dev-dependencies]
 python-semantic-release = "*"
