@@ -53,13 +53,13 @@ class DefaultConnector(Connector):
                 return await only_ok_response(session, url, reqargs)
 
     async def get(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("GET", endpoint, reqargs=reqargs)
+        return await self._request("GET", endpoint, reqargs=reqargs, session=session)
 
     async def post(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("POST", endpoint, reqargs=reqargs)
+        return await self._request("POST", endpoint, reqargs=reqargs, session=session)
 
     async def put(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("PUT", endpoint, reqargs=reqargs)
+        return await self._request("PUT", endpoint, reqargs=reqargs, session=session)
 
     async def delete(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("DELETE", endpoint, reqargs=reqargs)
+        return await self._request("DELETE", endpoint, reqargs=reqargs, session=session)

@@ -50,13 +50,13 @@ class DefaultConnectorSync(ConnectorSync):
         return response
 
     def get(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("GET", endpoint, reqargs=reqargs).json()
+        return self._request("GET", endpoint, reqargs=reqargs, session=session).json()
 
     def post(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("POST", endpoint, reqargs=reqargs).json()
+        return self._request("POST", endpoint, reqargs=reqargs, session=session).json()
 
     def put(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("PUT", endpoint, reqargs=reqargs).json()
+        return self._request("PUT", endpoint, reqargs=reqargs, session=session).json()
 
     def delete(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("DELETE", endpoint, reqargs=reqargs).json()
+        return self._request("DELETE", endpoint, reqargs=reqargs, session=session).json()
