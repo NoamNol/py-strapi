@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": ".env/bin/python",
     // Python linter
     "python.linting.prospectorEnabled": true,
     "python.linting.enabled": true,
@@ -27,7 +26,11 @@
         "getattrs",
         "mccabe",
         "mypy",
+        "pycodestyle",
         "pydash",
+        "pydocstyle",
+        "pyflakes",
+        "pylint",
         "PYPI",
         "pyproject",
         "pystrapi",
