@@ -2,8 +2,9 @@ from enum import Enum
 
 
 class Filter(str, Enum):
-    """
-    Strapi docs:
+    """Filters enum, like "$eq" and "$lt".
+
+    Docs:
     https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest/filtering-locale-publication.html#filtering
     """
 
