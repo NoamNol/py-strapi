@@ -6,6 +6,11 @@ from test.utils.asyncutils import asvalue
 from pystrapi.types import StrapiEntriesResponse, StrapiEntryResponse
 
 
+def _assert_entry_attrs_match(res: StrapiEntryResponse, entry_attrs: dict) -> None:
+    assert res['data']
+    assert is_match(res['data']['attributes'], entry_attrs)
+
+
 async def _delete_entry_if_exists(
     auth_client: AnyStrapiClient, plural_api_id: str, entry_attrs: dict, key: str
 ) -> None:
@@ -51,3 +56,30 @@ async def test_delete_entry_forbidden(client: AnyStrapiClient) -> None:
     """Can't delete if client isn't authorized"""
     with pytest.raises(Exception):
         await asvalue(client.delete_entry('posts', 2))
+
+
+async def test_update_entry__all_fields(auth_client: AnyStrapiClient, post3_attrs: dict) -> None:
+    await _delete_entry_if_exists(auth_client, 'posts', post3_attrs, 'title')
+
+    create_res: StrapiEntryResponse = await asvalue(auth_client.create_entry('posts', post3_attrs))
+    assert create_res['data']
+    entry_id = create_res['data']['id']
+    new_data = {**post3_attrs, **{'content': 'new content'}}
+    update_res: StrapiEntryResponse = await asvalue(auth_client.update_entry('posts', entry_id, new_data))
+    _assert_entry_attrs_match(update_res, new_data)
+    get_res: StrapiEntryResponse = await asvalue(auth_client.get_entry('posts', entry_id))
+    _assert_entry_attrs_match(get_res, new_data)
+
+
+async def test_update_entry__one_field(auth_client: AnyStrapiClient, post3_attrs: dict) -> None:
+    await _delete_entry_if_exists(auth_client, 'posts', post3_attrs, 'title')
+
+    new_data = {'content': 'new content-2'}
+    create_res: StrapiEntryResponse = await asvalue(auth_client.create_entry('posts', post3_attrs))
+    assert create_res['data']
+    entry_id = create_res['data']['id']
+    update_res: StrapiEntryResponse = await asvalue(
+        auth_client.update_entry('posts', entry_id, new_data))
+    _assert_entry_attrs_match(update_res, new_data)
+    get_res: StrapiEntryResponse = await asvalue(auth_client.get_entry('posts', entry_id))
+    _assert_entry_attrs_match(get_res, new_data)
