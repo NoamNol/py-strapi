@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.0](https://github.com/NoamNol/py-strapi/compare/v4.1.0...v4.2.0) (2022-06-27)
+
+
+### Features
+
+* export connectors and enums ([321bbcc](https://github.com/NoamNol/py-strapi/commit/321bbcc093833365814e4a57138807901dcec97b))
+
+
+### Bug Fixes
+
+* fix session in connectors ([62f342b](https://github.com/NoamNol/py-strapi/commit/62f342bed3e4f650e37cb7dccfade9251054dc48))
+
 ## [4.1.0](https://github.com/NoamNol/py-strapi/compare/v4.0.0...v4.1.0) (2022-06-26)
 
 
