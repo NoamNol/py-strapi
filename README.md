@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/pystrapi.svg)](https://pypi.org/project/pystrapi)
 ![pyversions](https://img.shields.io/pypi/pyversions/pystrapi)
 
-Work with Strapi from Python via REST API
+Work with [Strapi](https://strapi.io/) from Python via REST API
 
 ## Install
 
