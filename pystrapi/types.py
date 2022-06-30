@@ -28,6 +28,15 @@ class StrapiResponseError(TypedDict):
     details: dict
 
 
+class StrapiResponseMessage(TypedDict):
+    id: str
+    message: str
+
+
+class StrapiResponseMessagesGroup(TypedDict):
+    messages: List[StrapiResponseMessage]
+
+
 class StrapiEntryResponse(TypedDict):
     data: Optional[StrapiResponseEntryData]
     meta: NotRequired[StrapiResponseMeta]
@@ -51,6 +60,9 @@ class StrapiResponseUser(TypedDict):
 class StrapiAuthResponse(TypedDict):
     jwt: str
     user: StrapiResponseUser
+    data: NotRequired[Any]
+    error: NotRequired[StrapiResponseError]
+    message: NotRequired[List[StrapiResponseMessagesGroup]]
 
 
 StrapiResponse = Union[StrapiEntryResponse, StrapiEntriesResponse, StrapiAuthResponse]
