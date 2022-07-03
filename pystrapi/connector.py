@@ -3,6 +3,7 @@ from typing import Any, Protocol
 import aiohttp
 
 from .helpers import ok_response
+from ._utils import run_async_safe
 
 
 class Connector(Protocol):
@@ -53,10 +54,7 @@ class ConnectorWrapper:
         try:
             data = await response.json()
         except Exception as e:
-            try:
-                text: Any = await response.text()
-            except Exception:
-                text = response.reason
+            text = await run_async_safe(response.text, response.reason)
             raise Exception(f"Unable to {action}, status code: {status_code}, text: {text}") from e
         response.release()
         return ok_response(data, status_code, action)

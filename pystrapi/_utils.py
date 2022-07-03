@@ -1,4 +1,8 @@
-from typing import Any
+from typing import Any, Callable, Coroutine, TypeVar, Union
+
+
+V = TypeVar('V')
+D = TypeVar('D')
 
 
 def getattr_safe(o: object, name: str, default: Any = "_UNKNOWN_") -> Any:
@@ -39,3 +43,19 @@ def getattrs_safe(o: object, *names: str, default: Any = "_UNKNOWN_") -> list:
       [1, 'my_default']
     """
     return [getattr_safe(o, n, default) for n in names]
+
+
+def run_safe(func: Callable[[], V], default: D) -> Union[V, D]:
+    """Run function and return result. return `default` if failed."""
+    try:
+        return func()
+    except Exception:
+        return default
+
+
+async def run_async_safe(func: Callable[[], Coroutine[Any, Any, V]], default: D) -> Union[V, D]:
+    """Run async function and return result. return `default` if failed."""
+    try:
+        return await func()
+    except Exception:
+        return default
