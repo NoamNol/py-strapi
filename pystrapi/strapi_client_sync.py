@@ -213,7 +213,7 @@ class StrapiClientSync:
             return self.create_entry(plural_api_id=plural_api_id, data=data)
 
     def _get_auth_header(self) -> Optional[dict]:
-        """Compose auth header from token"""
+        """Compose auth header from token."""
         if self._token:
             header = {'Authorization': 'Bearer ' + self._token}
         else:

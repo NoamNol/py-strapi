@@ -2,8 +2,7 @@ from typing import Any
 
 
 def getattr_safe(o: object, name: str, default: Any = "_UNKNOWN_") -> Any:
-    """
-    Wrap `getattr` with try/except to never raise exception
+    """Wrap `getattr` with try/except to never raise exception.
 
     Usage
 
@@ -24,8 +23,7 @@ def getattr_safe(o: object, name: str, default: Any = "_UNKNOWN_") -> Any:
 
 
 def getattrs_safe(o: object, *names: str, default: Any = "_UNKNOWN_") -> list:
-    """
-    Run `getattr_safe` on each attribute name and return results
+    """Run `getattr_safe` on each attribute name and return results.
 
     Usage
 
