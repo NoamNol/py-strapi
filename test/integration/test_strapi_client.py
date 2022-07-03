@@ -27,6 +27,12 @@ async def test_get_entry(client: AnyStrapiClient, post1: dict) -> None:
     assert is_match(res['data'], post1)
 
 
+async def test_get_entry__not_found(client: AnyStrapiClient) -> None:
+    bad_id = -1
+    with pytest.raises(errors.NotFoundError):
+        await asvalue(client.get_entry('posts', bad_id))
+
+
 async def test_get_entries(client: AnyStrapiClient, post1: dict, post2: dict) -> None:
     res: StrapiEntriesResponse = await asvalue(client.get_entries('posts'))
     assert res['data']
@@ -53,7 +59,7 @@ async def test_create_and_delete_entry(auth_client: AnyStrapiClient, post3_attrs
     assert not find_deleted_res['data']  # No data because deleted not found
 
 
-async def test_delete_entry_forbidden(client: AnyStrapiClient) -> None:
+async def test_delete_entry__forbidden(client: AnyStrapiClient) -> None:
     """Can't delete if client isn't authorized"""
     with pytest.raises(errors.ForbiddenError):
         await asvalue(client.delete_entry('posts', 2))
@@ -84,3 +90,10 @@ async def test_update_entry__one_field(auth_client: AnyStrapiClient, post3_attrs
     _assert_entry_attrs_match(update_res, new_data)
     get_res: StrapiEntryResponse = await asvalue(auth_client.get_entry('posts', entry_id))
     _assert_entry_attrs_match(get_res, new_data)
+
+
+async def test_update_entry__validation_error(auth_client: AnyStrapiClient, post1: dict, post2: dict) -> None:
+    # (Post title is defined as a unique field in the database)
+    post2_title = post2['attributes']['title']
+    with pytest.raises(errors.ValidationError):
+        await asvalue(auth_client.update_entry('posts', post1['id'], {'title': post2_title}))
