@@ -27,7 +27,7 @@ class StrapiClientSync:
         connector: Optional[ConnectorSync] = None,
         token: Optional[str] = None,
     ):
-        api_url = api_url or "http://localhost:1337/api/"
+        api_url = api_url or 'http://localhost:1337/api/'
         if not api_url.endswith('/'):
             api_url = api_url + '/'
         connector = connector or DefaultConnectorSync()
@@ -47,15 +47,15 @@ class StrapiClientSync:
         See https://docs.strapi.io/developer-docs/latest/guides/auth-request.html
 
         Usage:
-        >>> client.authorize(identifier="author@strapi.io", password="strapi")
+        >>> client.authorize(identifier='author@strapi.io', password='strapi')
         """
-        endpoint = "auth/local"
-        body = {"identifier": identifier, "password": password}
+        endpoint = 'auth/local'
+        body = {'identifier': identifier, 'password': password}
         res_obj: StrapiAuthResponse = self._connector.post(endpoint, reqargs=dict(data=body))
-        if "jwt" in res_obj and res_obj["jwt"]:
-            self._token = res_obj["jwt"]
+        if 'jwt' in res_obj and res_obj['jwt']:
+            self._token = res_obj['jwt']
         else:
-            raise StrapiError(f"No JWT token in response {res_obj}")
+            raise StrapiError(f'No JWT token in response {res_obj}')
 
     def get_entry(
         self,
@@ -68,13 +68,13 @@ class StrapiClientSync:
 
         Usage:
         >>> client.get_entry('posts', 123)
-        >>> client.get_entry('posts', 123, populate="*")
-        >>> client.get_entry('posts', 123, fields=["description"])
+        >>> client.get_entry('posts', 123, populate='*')
+        >>> client.get_entry('posts', 123, fields=['description'])
         """
-        populate_param = _stringify_parameters("populate", populate)
-        fields_param = _stringify_parameters("fields", fields)
+        populate_param = _stringify_parameters('populate', populate)
+        fields_param = _stringify_parameters('fields', fields)
         params = {**populate_param, **fields_param}
-        endpoint = f"{plural_api_id}/{document_id}"
+        endpoint = f'{plural_api_id}/{document_id}'
         res: StrapiEntryResponse = self._connector.get(
             endpoint, reqargs=dict(headers=self._get_auth_header(), params=params))
         return res
@@ -97,23 +97,23 @@ class StrapiClientSync:
         Usage:
         >>> client.get_entries('posts')
         >>> client.get_entries('posts', get_all=True)
-        >>> client.get_entries('disks', sort=["name"])
-        >>> client.get_entries('disks', sort=["name:desc"])
-        >>> client.get_entries('posts', filters={"name": {"$eq": "The Name"}})
-        >>> client.get_entries('posts', filters={"name": {Filter.eq: "The Name"}})
-        >>> client.get_entries('posts', populate="*")
-        >>> client.get_entries('posts', populate=["colors", "author"])
-        >>> client.get_entries('posts', populate={"colors": {"populate": "colorAnimation"}, "author": "*"})
-        >>> client.get_entries('posts', fields=["description"])
-        >>> client.get_entries('posts', pagination={"limit": 3})
+        >>> client.get_entries('disks', sort=['name'])
+        >>> client.get_entries('disks', sort=['name:desc'])
+        >>> client.get_entries('posts', filters={'name': {'$eq': 'The Name'}})
+        >>> client.get_entries('posts', filters={'name': {Filter.eq: 'The Name'}})
+        >>> client.get_entries('posts', populate='*')
+        >>> client.get_entries('posts', populate=['colors', 'author'])
+        >>> client.get_entries('posts', populate={'colors': {'populate': 'colorAnimation'}, 'author': '*'})
+        >>> client.get_entries('posts', fields=['description'])
+        >>> client.get_entries('posts', pagination={'limit': 3})
         >>> client.get_entries('posts', publication_state=PublicationState.preview)
         """
-        sort_param = _stringify_parameters("sort", sort)
-        filters_param = _stringify_parameters("filters", filters)
-        populate_param = _stringify_parameters("populate", populate)
-        fields_param = _stringify_parameters("fields", fields)
-        pagination_param = _stringify_parameters("pagination", pagination)
-        publication_state_param = _stringify_parameters("publicationState", publication_state)
+        sort_param = _stringify_parameters('sort', sort)
+        filters_param = _stringify_parameters('filters', filters)
+        populate_param = _stringify_parameters('populate', populate)
+        fields_param = _stringify_parameters('fields', fields)
+        pagination_param = _stringify_parameters('pagination', pagination)
+        publication_state_param = _stringify_parameters('publicationState', publication_state)
         endpoint = plural_api_id
         params = {
             **sort_param,
@@ -132,8 +132,8 @@ class StrapiClientSync:
                 page = 1
                 get_more = True
                 while get_more:
-                    pagination = {"page": page, "pageSize": batch_size}
-                    pagination_param = _stringify_parameters("pagination", pagination)
+                    pagination = {'page': page, 'pageSize': batch_size}
+                    pagination_param = _stringify_parameters('pagination', pagination)
                     for key in pagination_param:
                         params[key] = pagination_param[key]
                     res_obj1: StrapiEntriesResponse = self._connector.get(
@@ -143,11 +143,11 @@ class StrapiClientSync:
                     if page == 1:
                         res_obj = res_obj1
                     else:
-                        if res_obj["data"] is not None and res_obj1["data"] is not None:
-                            res_obj["data"] += res_obj1["data"]
-                        res_obj["meta"] = res_obj1["meta"]
+                        if res_obj['data'] is not None and res_obj1['data'] is not None:
+                            res_obj['data'] += res_obj1['data']
+                        res_obj['meta'] = res_obj1['meta']
                     page += 1
-                    pages = res_obj["meta"]["pagination"]["pageCount"]
+                    pages = res_obj['meta']['pagination']['pageCount']
                     get_more = page <= pages
                 return res_obj
 
@@ -155,9 +155,9 @@ class StrapiClientSync:
         """Create new entry.
 
         Usage:
-        >>> client.create_entry("posts", {"name": "The Name"})
+        >>> client.create_entry('posts', {'name': 'The Name'})
         """
-        body = {"data": data}
+        body = {'data': data}
         res: StrapiEntryResponse = self._connector.post(
             plural_api_id, reqargs=dict(headers=self._get_auth_header(), json=body))
         return res
@@ -166,10 +166,10 @@ class StrapiClientSync:
         """Update entry fields.
 
         Usage:
-        >>> client.update_entry("posts", 123, {"name": "New Name"})
+        >>> client.update_entry('posts', 123, {'name': 'New Name'})
         """
-        endpoint = f"{plural_api_id}/{document_id}"
-        body = {"data": data}
+        endpoint = f'{plural_api_id}/{document_id}'
+        body = {'data': data}
         res: StrapiEntryResponse = self._connector.put(
             endpoint, reqargs=dict(headers=self._get_auth_header(), json=body))
         return res
@@ -178,9 +178,9 @@ class StrapiClientSync:
         """Delete entry by id.
 
         Usage:
-        >>> client.delete_entry("posts", 123)
+        >>> client.delete_entry('posts', 123)
         """
-        endpoint = f"{plural_api_id}/{document_id}"
+        endpoint = f'{plural_api_id}/{document_id}'
         res: StrapiEntryResponse = self._connector.delete(endpoint, reqargs=dict(headers=self._get_auth_header()))
         return res
 
@@ -190,23 +190,23 @@ class StrapiClientSync:
         Raise `ValueError` if more than one matching entry was found.
 
         Usage:
-        >>> client.upsert_entry('posts', {"name": "Unique Name", "description": "blabla"}, ['name'])
+        >>> client.upsert_entry('posts', {'name': 'Unique Name', 'description': 'blabla'}, ['name'])
         """
         filters = {}
         for key in keys:
-            filters[key] = {"$eq": data[key]}
+            filters[key] = {'$eq': data[key]}
         current_rec = self.get_entries(
             plural_api_id=plural_api_id,
-            fields=["id"],
+            fields=['id'],
             filters=filters,
-            pagination={"page": 1, "pageSize": 2}
+            pagination={'page': 1, 'pageSize': 2}
         )
-        num = current_rec["meta"]["pagination"]["total"]
+        num = current_rec['meta']['pagination']['total']
         if num > 1:
-            raise ValueError(f"Keys are ambiguous, found {num} records")
+            raise ValueError(f'Keys are ambiguous, found {num} records')
         elif num == 1:
             try:
-                entry_id: int = current_rec["data"][0]["id"]  # type: ignore
+                entry_id: int = current_rec['data'][0]['id']  # type: ignore
             except Exception:
                 raise StrapiError(f"Can't parse entry id of {current_rec}") from None
             return self.update_entry(plural_api_id=plural_api_id, document_id=entry_id, data=data)

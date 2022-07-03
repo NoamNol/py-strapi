@@ -2,7 +2,7 @@ import inspect
 from typing import Any, Coroutine, TypeVar, Union
 
 
-V = TypeVar("V", bound="Any")
+V = TypeVar('V', bound='Any')
 
 
 async def asvalue(val: Union[V, Coroutine[Any, Any, V]]) -> V:

@@ -25,7 +25,7 @@ class DefaultConnector(Connector):
             try:
                 return await session.request(method=method, url=url, **reqargs)
             except Exception as e:
-                raise StrapiError(f"Unable to {method}, error: {e})") from e
+                raise StrapiError(f'Unable to {method}, error: {e})') from e
         reqargs = reqargs or {}
         if session:
             return await _request(session, url, reqargs)
@@ -56,19 +56,19 @@ class ConnectorWrapper:
             data = await response.json()
         except Exception as e:
             text = await run_async_safe(response.text, response.reason)
-            raise JsonParsingError(f"Unable to {action}, status code: {status_code}, response: {text}") from e
+            raise JsonParsingError(f'Unable to {action}, status code: {status_code}, response: {text}') from e
         response.release()
         raise_for_response(data, status_code, action)
         return data
 
     async def get(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("GET", endpoint, reqargs=reqargs, session=session)
+        return await self._request('GET', endpoint, reqargs=reqargs, session=session)
 
     async def post(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("POST", endpoint, reqargs=reqargs, session=session)
+        return await self._request('POST', endpoint, reqargs=reqargs, session=session)
 
     async def put(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("PUT", endpoint, reqargs=reqargs, session=session)
+        return await self._request('PUT', endpoint, reqargs=reqargs, session=session)
 
     async def delete(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        return await self._request("DELETE", endpoint, reqargs=reqargs, session=session)
+        return await self._request('DELETE', endpoint, reqargs=reqargs, session=session)

@@ -8,48 +8,48 @@ class Filter(str, Enum):
     https://docs.strapi.io/developer-docs/latest/developer-resources/database-apis-reference/rest/filtering-locale-publication.html#filtering
     """
 
-    eq = "$eq"
+    eq = '$eq'
     """Equal"""
-    ne = "$ne"
+    ne = '$ne'
     """Not equal"""
-    lt = "$lt"
+    lt = '$lt'
     """Less than"""
-    lte = "$lte"
+    lte = '$lte'
     """Less than or equal to"""
-    gt = "$gt"
+    gt = '$gt'
     """Greater than"""
-    gte = "$gte"
+    gte = '$gte'
     """Greater than or equal to"""
-    IN = "$in"
+    IN = '$in'
     """Included in an array"""
-    notIn = "$notIn"
+    notIn = '$notIn'
     """Not included in an array"""
-    contains = "$contains"
+    contains = '$contains'
     """Contains (case-sensitive)"""
-    notContains = "$notContains"
+    notContains = '$notContains'
     """Does not contain (case-sensitive)"""
-    containsi = "$containsi"
+    containsi = '$containsi'
     """Contains"""
-    notContainsi = "$notContainsi"
+    notContainsi = '$notContainsi'
     """Does not contain"""
-    null = "$null"
+    null = '$null'
     """Is null"""
-    notNull = "$notNull"
+    notNull = '$notNull'
     """Is not null"""
-    between = "$between"
+    between = '$between'
     """Is between"""
-    startsWith = "$startsWith"
+    startsWith = '$startsWith'
     """Starts with"""
-    endsWith = "$endsWith"
+    endsWith = '$endsWith'
     """Ends with"""
-    OR = "$or"
+    OR = '$or'
     """Joins the filters in an "or" expression"""
-    AND = "$and"
+    AND = '$and'
     """Joins the filters in an "and" expression"""
 
 
 class PublicationState(str, Enum):
-    live = "live"
+    live = 'live'
     """returns only published entries (default)"""
-    preview = "preview"
+    preview = 'preview'
     """returns both draft entries & published entries"""
