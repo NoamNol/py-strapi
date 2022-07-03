@@ -3,11 +3,13 @@ from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Un
 from .errors import (
     ForbiddenError,
     NotFoundError,
+    RatelimitError,
     StrapiError,
     ValidationError
 )
 from .types import (
     StrapiEntryOrEntriesResponse,
+    StrapiResponseMessage,
     StrapiResponse,
     StrapiResponseEntryData,
     StrapiResponseError,
@@ -72,6 +74,15 @@ def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
             yield f'[{key}]', value
 
 
+def get_response_messages(response: StrapiResponse) -> List[StrapiResponseMessage]:
+    messages: List[StrapiResponseMessage] = []
+    for messages_group in response.get('message', []):  # type: ignore
+        for message in messages_group.get('messages', []):
+            if 'message' in message and 'id' in message:
+                messages.append(message)
+    return messages
+
+
 def raise_for_response(response: StrapiResponse, status_code: int, action: str) -> None:
     """Raise suitable Strapi exception if response status code is above (or equal to) 400."""
     if status_code < 400:
@@ -88,4 +99,8 @@ def raise_for_response(response: StrapiResponse, status_code: int, action: str) 
         if error_name in map_exceptions:
             exception_type = map_exceptions[error_name]
             raise exception_type(message)
+    messages = get_response_messages(response)
+    for msg in messages:
+        if 'ratelimit' in msg['id']:
+            raise RatelimitError(message)
     raise StrapiError(message)
