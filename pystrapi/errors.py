@@ -16,3 +16,7 @@ class NotFoundError(StrapiError):
 
 class ValidationError(StrapiError):
     pass
+
+
+class RatelimitError(StrapiError):
+    pass

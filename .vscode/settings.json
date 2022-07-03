@@ -35,6 +35,7 @@
         "pyproject",
         "pystrapi",
         "pytest",
+        "Ratelimit",
         "reqargs",
         "strapi",
         "testdata",
