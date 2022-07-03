@@ -11,11 +11,11 @@ class ConnectorSync(Protocol):
     def request(
         self, method: str, url: str, *, reqargs: dict = None, session: requests.Session = None
     ) -> requests.Response:
-        """Send HTTP request and load response"""
+        """Send HTTP request and load response."""
 
 
 class DefaultConnectorSync(ConnectorSync):
-    """Default connector. Used if no custom connector was given"""
+    """Default connector. Used if no custom connector was given."""
 
     def request(
         self, method: str, url: str, *, reqargs: dict = None, session: requests.Session = None

@@ -10,11 +10,11 @@ class Connector(Protocol):
     async def request(
         self, method: str, url: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None
     ) -> aiohttp.ClientResponse:
-        """Send HTTP request and load response"""
+        """Send HTTP request and load response."""
 
 
 class DefaultConnector(Connector):
-    """Default connector. Used if no custom connector was given"""
+    """Default connector. Used if no custom connector was given."""
 
     async def request(
         self, method: str, url: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None
