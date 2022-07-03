@@ -28,7 +28,7 @@ class DefaultConnectorSync(ConnectorSync):
             else:
                 response = requests.request(method=method, url=url, **reqargs)
         except Exception as e:
-            raise StrapiError(f"Unable to {method}, error: {e})") from e
+            raise StrapiError(f'Unable to {method}, error: {e})') from e
         return response
 
 
@@ -53,19 +53,19 @@ class ConnectorWrapperSync:
         try:
             data = response.json()
         except Exception as e:
-            text = getattr_safe(response, "text", response.reason)
-            raise JsonParsingError(f"Unable to {action}, status code: {status_code}, response: {text}") from e
+            text = getattr_safe(response, 'text', response.reason)
+            raise JsonParsingError(f'Unable to {action}, status code: {status_code}, response: {text}') from e
         raise_for_response(data, status_code, action)
         return data
 
     def get(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
-        return self._request("GET", endpoint, reqargs=reqargs, session=session)
+        return self._request('GET', endpoint, reqargs=reqargs, session=session)
 
     def post(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
-        return self._request("POST", endpoint, reqargs=reqargs, session=session)
+        return self._request('POST', endpoint, reqargs=reqargs, session=session)
 
     def put(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
-        return self._request("PUT", endpoint, reqargs=reqargs, session=session)
+        return self._request('PUT', endpoint, reqargs=reqargs, session=session)
 
     def delete(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
-        return self._request("DELETE", endpoint, reqargs=reqargs, session=session)
+        return self._request('DELETE', endpoint, reqargs=reqargs, session=session)

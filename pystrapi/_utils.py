@@ -5,7 +5,7 @@ V = TypeVar('V')
 D = TypeVar('D')
 
 
-def getattr_safe(o: object, name: str, default: Any = "_UNKNOWN_") -> Any:
+def getattr_safe(o: object, name: str, default: Any = '_UNKNOWN_') -> Any:
     """Wrap `getattr` with try/except to never raise exception.
 
     Usage
@@ -26,7 +26,7 @@ def getattr_safe(o: object, name: str, default: Any = "_UNKNOWN_") -> Any:
         return default
 
 
-def getattrs_safe(o: object, *names: str, default: Any = "_UNKNOWN_") -> list:
+def getattrs_safe(o: object, *names: str, default: Any = '_UNKNOWN_') -> list:
     """Run `getattr_safe` on each attribute name and return results.
 
     Usage

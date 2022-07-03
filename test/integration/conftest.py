@@ -25,11 +25,11 @@ async def auth_client(client: AnyStrapiClient) -> AnyStrapiClient:
 def post1() -> dict:
     """This post should already be in test-db"""
     return {
-        "id": 1,
-        "attributes": {
-            "description": "The first post",
-            "content": "Hello",
-            "title": "First Post",
+        'id': 1,
+        'attributes': {
+            'description': 'The first post',
+            'content': 'Hello',
+            'title': 'First Post',
         }
     }
 
@@ -38,11 +38,11 @@ def post1() -> dict:
 def post2() -> dict:
     """This post should already be in test-db"""
     return {
-        "id": 2,
-        "attributes": {
-            "description": "The second post",
-            "content": "Hello again",
-            "title": "Second Post"
+        'id': 2,
+        'attributes': {
+            'description': 'The second post',
+            'content': 'Hello again',
+            'title': 'Second Post'
         }
     }
 
@@ -51,7 +51,7 @@ def post2() -> dict:
 def post3_attrs() -> dict:
     """This post should not be in test-db at the beginning"""
     return {
-        "description": "The third post",
-        "content": "Hello",
-        "title": "Third Post"
+        'description': 'The third post',
+        'content': 'Hello',
+        'title': 'Third Post'
     }

@@ -18,7 +18,7 @@ from .types import (
 
 
 def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
-    return {"id": entry["id"], **entry["attributes"]}
+    return {'id': entry['id'], **entry['attributes']}
 
 
 def process_data(response: dict) -> Union[dict, List[dict]]:
@@ -26,12 +26,12 @@ def process_data(response: dict) -> Union[dict, List[dict]]:
 
     Usage:
     >>> process_data(sync_client.get_entry('posts', 1))
-    {"id": 1, "name": "post1", "description": "..."}
+    {'id': 1, 'name': 'post1', 'description': '...'}
 
     >>> process_data(sync_client.get_entries('posts'))
     [
-        {"id": 1, "name": "post1", "description": "..."},
-        {"id": 2, "name": "post2", "description": "..."},
+        {'id': 1, 'name': 'post1', 'description': '...'},
+        {'id': 2, 'name': 'post2', 'description': '...'},
     ]
     """
     response: StrapiEntryOrEntriesResponse = response  # type: ignore

@@ -27,7 +27,7 @@ class StrapiClient:
         connector: Optional[Connector] = None,
         token: Optional[str] = None
     ):
-        api_url = api_url or "http://localhost:1337/api/"
+        api_url = api_url or 'http://localhost:1337/api/'
         if not api_url.endswith('/'):
             api_url = api_url + '/'
         connector = connector or DefaultConnector()
@@ -47,7 +47,7 @@ class StrapiClient:
         See https://docs.strapi.io/developer-docs/latest/guides/auth-request.html
 
         Usage:
-        >>> client.authorize(identifier="author@strapi.io", password="strapi")
+        >>> client.authorize(identifier='author@strapi.io', password='strapi')
         """
         endpoint = 'auth/local'
         body = {'identifier': identifier, 'password': password}
@@ -68,13 +68,13 @@ class StrapiClient:
 
         Usage:
         >>> client.get_entry('posts', 123)
-        >>> client.get_entry('posts', 123, populate="*")
-        >>> client.get_entry('posts', 123, fields=["description"])
+        >>> client.get_entry('posts', 123, populate='*')
+        >>> client.get_entry('posts', 123, fields=['description'])
         """
         populate_param = _stringify_parameters('populate', populate)
         fields_param = _stringify_parameters('fields', fields)
         params = {**populate_param, **fields_param}
-        endpoint = f"{plural_api_id}/{document_id}"
+        endpoint = f'{plural_api_id}/{document_id}'
         res: StrapiEntryResponse = await self._connector.get(
             endpoint, reqargs=dict(headers=self._get_auth_header(), params=params))
         return res
@@ -97,15 +97,15 @@ class StrapiClient:
         Usage:
         >>> client.get_entries('posts')
         >>> client.get_entries('posts', get_all=True)
-        >>> client.get_entries('disks', sort=["name"])
-        >>> client.get_entries('disks', sort=["name:desc"])
-        >>> client.get_entries('posts', filters={"name": {"$eq": "The Name"}})
-        >>> client.get_entries('posts', filters={"name": {Filter.eq: "The Name"}})
-        >>> client.get_entries('posts', populate="*")
-        >>> client.get_entries('posts', populate=["colors", "author"])
-        >>> client.get_entries('posts', populate={"colors": {"populate": "colorAnimation"}, "author": "*"})
-        >>> client.get_entries('posts', fields=["description"])
-        >>> client.get_entries('posts', pagination={"limit": 3})
+        >>> client.get_entries('disks', sort=['name'])
+        >>> client.get_entries('disks', sort=['name:desc'])
+        >>> client.get_entries('posts', filters={'name': {'$eq': 'The Name'}})
+        >>> client.get_entries('posts', filters={'name': {Filter.eq: 'The Name'}})
+        >>> client.get_entries('posts', populate='*')
+        >>> client.get_entries('posts', populate=['colors', 'author'])
+        >>> client.get_entries('posts', populate={'colors': {'populate': 'colorAnimation'}, 'author': '*'})
+        >>> client.get_entries('posts', fields=['description'])
+        >>> client.get_entries('posts', pagination={'limit': 3})
         >>> client.get_entries('posts', publication_state=PublicationState.preview)
         """
         sort_param = _stringify_parameters('sort', sort)
@@ -154,7 +154,7 @@ class StrapiClient:
         """Create new entry.
 
         Usage:
-        >>> client.create_entry("posts", {"name": "The Name"})
+        >>> client.create_entry('posts', {'name': 'The Name'})
         """
         body = {'data': data}
         res: StrapiEntryResponse = await self._connector.post(
@@ -170,7 +170,7 @@ class StrapiClient:
         """Update entry fields.
 
         Usage:
-        >>> client.update_entry("posts", 123, {"name": "New Name"})
+        >>> client.update_entry('posts', 123, {'name': 'New Name'})
         """
         endpoint = f'{plural_api_id}/{document_id}'
         body = {'data': data}
@@ -182,7 +182,7 @@ class StrapiClient:
         """Delete entry by id.
 
         Usage:
-        >>> client.delete_entry("posts", 123)
+        >>> client.delete_entry('posts', 123)
         """
         endpoint = f'{plural_api_id}/{document_id}'
         res: StrapiEntryResponse = await self._connector.delete(
@@ -200,7 +200,7 @@ class StrapiClient:
         Raise `ValueError` if more than one matching entry was found.
 
         Usage:
-        >>> client.upsert_entry('posts', {"name": "Unique Name", "description": "blabla"}, ['name'])
+        >>> client.upsert_entry('posts', {'name': 'Unique Name', 'description': 'blabla'}, ['name'])
         """
         filters = {}
         for key in keys:
