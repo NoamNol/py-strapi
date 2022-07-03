@@ -2,7 +2,8 @@ from abc import abstractmethod
 from typing import Any, Protocol
 import requests
 
-from .helpers import ok_response
+from .errors import JsonParsingError, StrapiError
+from .helpers import raise_for_response
 from ._utils import getattr_safe
 
 
@@ -27,7 +28,7 @@ class DefaultConnectorSync(ConnectorSync):
             else:
                 response = requests.request(method=method, url=url, **reqargs)
         except Exception as e:
-            raise Exception(f"Unable to {method}, error: {e})") from e
+            raise StrapiError(f"Unable to {method}, error: {e})") from e
         return response
 
 
@@ -53,8 +54,9 @@ class ConnectorWrapperSync:
             data = response.json()
         except Exception as e:
             text = getattr_safe(response, "text", response.reason)
-            raise Exception(f"Unable to {action}, status code: {status_code}, text: {text}") from e
-        return ok_response(data, status_code, action)
+            raise JsonParsingError(f"Unable to {action}, status code: {status_code}, response: {text}") from e
+        raise_for_response(data, status_code, action)
+        return data
 
     def get(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
         return self._request("GET", endpoint, reqargs=reqargs, session=session)

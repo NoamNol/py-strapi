@@ -3,6 +3,7 @@ from pydash.predicates import is_match  # type: ignore
 
 from test.types import AnyStrapiClient
 from test.utils.asyncutils import asvalue
+from pystrapi import errors
 from pystrapi.types import StrapiEntriesResponse, StrapiEntryResponse
 
 
@@ -54,7 +55,7 @@ async def test_create_and_delete_entry(auth_client: AnyStrapiClient, post3_attrs
 
 async def test_delete_entry_forbidden(client: AnyStrapiClient) -> None:
     """Can't delete if client isn't authorized"""
-    with pytest.raises(Exception):
+    with pytest.raises(errors.ForbiddenError):
         await asvalue(client.delete_entry('posts', 2))
 
 

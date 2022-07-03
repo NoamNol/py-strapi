@@ -2,7 +2,8 @@ from abc import abstractmethod
 from typing import Any, Protocol
 import aiohttp
 
-from .helpers import ok_response
+from .errors import JsonParsingError, StrapiError
+from .helpers import raise_for_response
 from ._utils import run_async_safe
 
 
@@ -24,7 +25,7 @@ class DefaultConnector(Connector):
             try:
                 return await session.request(method=method, url=url, **reqargs)
             except Exception as e:
-                raise Exception(f"Unable to {method}, error: {e})") from e
+                raise StrapiError(f"Unable to {method}, error: {e})") from e
         reqargs = reqargs or {}
         if session:
             return await _request(session, url, reqargs)
@@ -55,9 +56,10 @@ class ConnectorWrapper:
             data = await response.json()
         except Exception as e:
             text = await run_async_safe(response.text, response.reason)
-            raise Exception(f"Unable to {action}, status code: {status_code}, text: {text}") from e
+            raise JsonParsingError(f"Unable to {action}, status code: {status_code}, response: {text}") from e
         response.release()
-        return ok_response(data, status_code, action)
+        raise_for_response(data, status_code, action)
+        return data
 
     async def get(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
         return await self._request("GET", endpoint, reqargs=reqargs, session=session)
