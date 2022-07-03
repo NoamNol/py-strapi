@@ -1,42 +1,26 @@
 from abc import abstractmethod
-from typing import Any, Dict, Protocol
-
+from typing import Any, Protocol
 import requests
 
-from ._utils import getattrs_safe
+from .helpers import ok_response
+from ._utils import getattr_safe
 
 
 class ConnectorSync(Protocol):
-    api_url: str
-
     @abstractmethod
-    def get(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        """Send HTTP GET request and load response text as json"""
-
-    @abstractmethod
-    def post(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        """Send HTTP POST request and load response text as json"""
-
-    @abstractmethod
-    def put(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        """Send HTTP PUT request and load response text as json"""
-
-    @abstractmethod
-    def delete(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        """Send HTTP DELETE request and load response text as json"""
+    def request(
+        self, method: str, url: str, *, reqargs: dict = None, session: requests.Session = None
+    ) -> requests.Response:
+        """Send HTTP request and load response"""
 
 
 class DefaultConnectorSync(ConnectorSync):
     """Default connector. Used if no custom connector was given"""
 
-    def __init__(self, api_url: str):
-        self.api_url = api_url
-
-    def _request(
-        self, method: str, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None
+    def request(
+        self, method: str, url: str, *, reqargs: dict = None, session: requests.Session = None
     ) -> requests.Response:
         reqargs = reqargs or {}
-        url = self.api_url + endpoint
         try:
             if session:
                 response = session.request(method=method, url=url, **reqargs)
@@ -44,19 +28,42 @@ class DefaultConnectorSync(ConnectorSync):
                 response = requests.request(method=method, url=url, **reqargs)
         except Exception as e:
             raise Exception(f"Unable to {method}, error: {e})") from e
-        if not response.ok:
-            status_code, text = getattrs_safe(response, "status_code", "text")
-            raise Exception(f"Unable to {method}, status code: {status_code}, text: {text}")
         return response
 
-    def get(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("GET", endpoint, reqargs=reqargs, session=session).json()
 
-    def post(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("POST", endpoint, reqargs=reqargs, session=session).json()
+class ConnectorWrapperSync:
+    """Wrapper around the connector.
+    - Send requests using the connector.
+    - Parse response as json.
+    - Raise custom strapi exceptions for different types of bad response.
+    """
 
-    def put(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("PUT", endpoint, reqargs=reqargs, session=session).json()
+    def __init__(self, api_url: str, connector: ConnectorSync):
+        self.api_url = api_url
+        self._connector = connector
 
-    def delete(self, endpoint: str, *, reqargs: Dict[str, Any] = None, session: requests.Session = None) -> Any:
-        return self._request("DELETE", endpoint, reqargs=reqargs, session=session).json()
+    def _request(
+        self, method: str, endpoint: str, *, reqargs: dict = None, session: requests.Session = None
+    ) -> Any:
+        url = self.api_url + endpoint
+        action = f'send {method} to {url}'
+        response = self._connector.request(method, url, reqargs=reqargs, session=session)
+        status_code = response.status_code
+        try:
+            data = response.json()
+        except Exception as e:
+            text = getattr_safe(response, "text", response.reason)
+            raise Exception(f"Unable to {action}, status code: {status_code}, text: {text}") from e
+        return ok_response(data, status_code, action)
+
+    def get(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
+        return self._request("GET", endpoint, reqargs=reqargs, session=session)
+
+    def post(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
+        return self._request("POST", endpoint, reqargs=reqargs, session=session)
+
+    def put(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
+        return self._request("PUT", endpoint, reqargs=reqargs, session=session)
+
+    def delete(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
+        return self._request("DELETE", endpoint, reqargs=reqargs, session=session)

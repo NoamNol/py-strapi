@@ -2,55 +2,64 @@ from abc import abstractmethod
 from typing import Any, Protocol
 import aiohttp
 
+from .helpers import ok_response
+
 
 class Connector(Protocol):
-    api_url: str
-
     @abstractmethod
-    async def get(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        """Send HTTP GET request and load response text as json"""
-
-    @abstractmethod
-    async def post(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        """Send HTTP POST request and load response text as json"""
-
-    @abstractmethod
-    async def put(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        """Send HTTP PUT request and load response text as json"""
-
-    @abstractmethod
-    async def delete(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
-        """Send HTTP DELETE request and load response text as json"""
+    async def request(
+        self, method: str, url: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None
+    ) -> aiohttp.ClientResponse:
+        """Send HTTP request and load response"""
 
 
 class DefaultConnector(Connector):
     """Default connector. Used if no custom connector was given"""
 
-    def __init__(self, api_url: str):
+    async def request(
+        self, method: str, url: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None
+    ) -> aiohttp.ClientResponse:
+        async def _request(session: aiohttp.ClientSession, url: str, reqargs: dict) -> aiohttp.ClientResponse:
+            try:
+                return await session.request(method=method, url=url, **reqargs)
+            except Exception as e:
+                raise Exception(f"Unable to {method}, error: {e})") from e
+        reqargs = reqargs or {}
+        if session:
+            return await _request(session, url, reqargs)
+        else:
+            async with aiohttp.ClientSession() as session:
+                return await _request(session, url, reqargs)
+
+
+class ConnectorWrapper:
+    """Wrapper around the connector.
+    - Send requests using the connector.
+    - Parse response as json.
+    - Raise custom strapi exceptions for different types of bad response.
+    """
+
+    def __init__(self, api_url: str, connector: Connector):
         self.api_url = api_url
+        self._connector = connector
 
     async def _request(
         self, method: str, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None
     ) -> Any:
-        async def only_ok_response(session: aiohttp.ClientSession, url: str, reqargs: dict) -> Any:
-            try:
-                async with session.request(method=method, url=url, **reqargs) as response:
-                    if not response.ok:
-                        try:
-                            text: Any = await response.text()
-                        except Exception:
-                            text = response.reason
-                        raise Exception(f"Unable to {method}, status code: {response.status}, text: {text}")
-                    return await response.json()
-            except Exception as e:
-                raise Exception(f"Unable to {method}, error: {e})") from e
-        reqargs = reqargs or {}
         url = self.api_url + endpoint
-        if session:
-            return await only_ok_response(session, url, reqargs)
-        else:
-            async with aiohttp.ClientSession() as session:
-                return await only_ok_response(session, url, reqargs)
+        action = f'send {method} to {url}'
+        response = await self._connector.request(method, url, reqargs=reqargs, session=session)
+        status_code = response.status
+        try:
+            data = await response.json()
+        except Exception as e:
+            try:
+                text: Any = await response.text()
+            except Exception:
+                text = response.reason
+            raise Exception(f"Unable to {action}, status code: {status_code}, text: {text}") from e
+        response.release()
+        return ok_response(data, status_code, action)
 
     async def get(self, endpoint: str, *, reqargs: dict = None, session: aiohttp.ClientSession = None) -> Any:
         return await self._request("GET", endpoint, reqargs=reqargs, session=session)

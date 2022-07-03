@@ -1,6 +1,6 @@
 from typing import Any, Dict, Iterator, List, Mapping, Tuple, Union
 
-from .types import StrapiEntryOrEntriesResponse, StrapiResponseEntryData, StrapiResponseMetaPagination
+from .types import StrapiEntryOrEntriesResponse, StrapiResponse, StrapiResponseEntryData, StrapiResponseMetaPagination
 
 
 def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
@@ -58,3 +58,10 @@ def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
                 yield f'[{key}]{key1}', value1
         else:
             yield f'[{key}]', value
+
+
+def ok_response(response: StrapiResponse, status_code: int, action: str) -> Any:
+    """Only return good response. find suitable Strapi exception otherwise."""
+    if status_code < 400:
+        return response
+    raise Exception(f"Unable to {action}, status code: {status_code}, json: {response}")

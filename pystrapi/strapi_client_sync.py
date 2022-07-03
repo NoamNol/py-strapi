@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 from .helpers import _stringify_parameters
 from .parameters import PublicationState
-from .connector_sync import DefaultConnectorSync, ConnectorSync
+from .connector_sync import ConnectorWrapperSync, DefaultConnectorSync, ConnectorSync
 from .types import (
     PaginationParameter,
     PopulationParameter,
@@ -29,7 +29,8 @@ class StrapiClientSync:
         api_url = api_url or "http://localhost:1337/api/"
         if not api_url.endswith('/'):
             api_url = api_url + '/'
-        self._connector = connector or DefaultConnectorSync(api_url)
+        connector = connector or DefaultConnectorSync()
+        self._connector = ConnectorWrapperSync(api_url, connector)
         self._token = token
 
     def set_token(self, token: str) -> None:
