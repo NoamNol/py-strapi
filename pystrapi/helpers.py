@@ -1,6 +1,18 @@
-from typing import Any, Dict, Iterator, List, Mapping, Tuple, Union
+from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
 
-from .types import StrapiEntryOrEntriesResponse, StrapiResponse, StrapiResponseEntryData, StrapiResponseMetaPagination
+from .errors import (
+    ForbiddenError,
+    NotFoundError,
+    StrapiError,
+    ValidationError
+)
+from .types import (
+    StrapiEntryOrEntriesResponse,
+    StrapiResponse,
+    StrapiResponseEntryData,
+    StrapiResponseError,
+    StrapiResponseMetaPagination
+)
 
 
 def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
@@ -60,8 +72,20 @@ def _flatten_parameters(parameters: dict) -> Iterator[Tuple[str, Any]]:
             yield f'[{key}]', value
 
 
-def ok_response(response: StrapiResponse, status_code: int, action: str) -> Any:
-    """Only return good response. find suitable Strapi exception otherwise."""
+def raise_for_response(response: StrapiResponse, status_code: int, action: str) -> None:
+    """Raise suitable Strapi exception if response status code is above (or equal to) 400."""
     if status_code < 400:
-        return response
-    raise Exception(f"Unable to {action}, status code: {status_code}, json: {response}")
+        return
+    message = f'Unable to {action}, status code: {status_code}, response: {response}'
+    error: Optional[StrapiResponseError] = response.get('error')
+    if error:
+        error_name: str = error['name']
+        map_exceptions: Dict[str, Type[StrapiError]] = {
+            'ForbiddenError': ForbiddenError,
+            'NotFoundError': NotFoundError,
+            'ValidationError': ValidationError,
+        }
+        if error_name in map_exceptions:
+            exception_type = map_exceptions[error_name]
+            raise exception_type(message)
+    raise StrapiError(message)

@@ -1,6 +1,7 @@
 import requests
 from typing import List, Optional, Union
 
+from .errors import StrapiError
 from .helpers import _stringify_parameters
 from .parameters import PublicationState
 from .connector_sync import ConnectorWrapperSync, DefaultConnectorSync, ConnectorSync
@@ -54,7 +55,7 @@ class StrapiClientSync:
         if "jwt" in res_obj and res_obj["jwt"]:
             self._token = res_obj["jwt"]
         else:
-            raise Exception("No JWT token in response")
+            raise StrapiError(f"No JWT token in response {res_obj}")
 
     def get_entry(
         self,
@@ -207,7 +208,7 @@ class StrapiClientSync:
             try:
                 entry_id: int = current_rec["data"][0]["id"]  # type: ignore
             except Exception:
-                raise Exception(f"Can't parse entry id of {current_rec}") from None
+                raise StrapiError(f"Can't parse entry id of {current_rec}") from None
             return self.update_entry(plural_api_id=plural_api_id, document_id=entry_id, data=data)
         else:
             return self.create_entry(plural_api_id=plural_api_id, data=data)
