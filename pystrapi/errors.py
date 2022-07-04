@@ -18,5 +18,9 @@ class ValidationError(StrapiError):
     pass
 
 
+class InternalServerError(StrapiError):
+    pass
+
+
 class RatelimitError(StrapiError):
     pass

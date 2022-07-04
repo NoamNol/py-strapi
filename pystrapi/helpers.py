@@ -2,6 +2,7 @@ from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Un
 
 from .errors import (
     ForbiddenError,
+    InternalServerError,
     NotFoundError,
     RatelimitError,
     StrapiError,
@@ -93,6 +94,7 @@ def raise_for_response(response: StrapiResponse, status_code: int, action: str) 
         error_name: str = error['name']
         map_exceptions: Dict[str, Type[StrapiError]] = {
             'ForbiddenError': ForbiddenError,
+            'InternalServerError': InternalServerError,
             'NotFoundError': NotFoundError,
             'ValidationError': ValidationError,
         }
