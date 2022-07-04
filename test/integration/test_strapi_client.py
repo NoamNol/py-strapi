@@ -1,9 +1,12 @@
+import math
 import pytest
 from pydash.predicates import is_match  # type: ignore
 
 from test.types import AnyStrapiClient
 from test.utils.asyncutils import asvalue
 from pystrapi import errors
+from pystrapi.helpers import process_data
+from pystrapi.parameters import Filter
 from pystrapi.types import StrapiEntriesResponse, StrapiEntryResponse
 
 
@@ -38,6 +41,38 @@ async def test_get_entries(client: AnyStrapiClient, post1: dict, post2: dict) ->
     assert res['data']
     assert is_match(res['data'][0], post1)
     assert is_match(res['data'][1], post2)
+
+
+async def test_get_entries_pagination(auth_client: AnyStrapiClient) -> None:
+    size, batch_size = 20, 5
+    new_posts = [{
+        'title': f'test-{i:03}',  # pad zeros for the sort
+        'description': 'test',
+        'content': 'test',
+    } for i in range(size)]
+
+    # Delete posts (cleanup)
+    for post in new_posts:
+        await _delete_entry_if_exists(auth_client, 'posts', post, 'title')
+    # Create posts
+    for post in new_posts:
+        await asvalue(auth_client.create_entry('posts', post))
+    # Get posts
+    res: StrapiEntriesResponse = await asvalue(auth_client.get_entries(
+        'posts', get_all=True, batch_size=batch_size, sort=['title'],
+        filters={'title': {Filter.startsWith: 'test'}})
+    )
+    assert res['data']
+    assert len(res['data']) == len(new_posts)
+    expected_page_count = math.ceil(size / batch_size)
+    assert res['meta']['pagination'] == {
+        'page': expected_page_count, 'pageSize': batch_size, 'pageCount': expected_page_count, 'total': size}
+    returned_entries = process_data(res)
+    for new_post, returned_entry in zip(new_posts, returned_entries):
+        assert is_match(returned_entry, new_post)
+    # Delete posts (cleanup)
+    for post in new_posts:
+        await _delete_entry_if_exists(auth_client, 'posts', post, 'title')
 
 
 async def test_create_and_delete_entry(auth_client: AnyStrapiClient, post3_attrs: dict) -> None:

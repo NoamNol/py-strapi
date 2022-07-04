@@ -22,7 +22,7 @@ def _add_id_to_attributes(entry: StrapiResponseEntryData) -> Dict[str, Any]:
     return {'id': entry['id'], **entry['attributes']}
 
 
-def process_data(response: dict) -> Union[dict, List[dict]]:
+def process_data(response: Union[Mapping, dict]) -> Union[dict, List[dict]]:
     """Process response with entries.
 
     Usage:
@@ -45,7 +45,7 @@ def process_data(response: dict) -> Union[dict, List[dict]]:
         return _add_id_to_attributes(data)
 
 
-def process_response(response: dict) -> Tuple[Union[dict, List[dict]], StrapiResponseMetaPagination]:
+def process_response(response: Union[Mapping, dict]) -> Tuple[Union[dict, List[dict]], StrapiResponseMetaPagination]:
     """Process response with entries."""
     response: StrapiEntryOrEntriesResponse = response  # type: ignore
     entries = process_data(response)
