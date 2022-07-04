@@ -107,12 +107,14 @@ class StrapiClientSync:
         >>> client.get_entries('posts', fields=['description'])
         >>> client.get_entries('posts', pagination={'limit': 3})
         >>> client.get_entries('posts', publication_state=PublicationState.preview)
+
+        Note: Pagination methods can not be mixed. Don't use `get_all` with `pagination`.
         """
         sort_param = _stringify_parameters('sort', sort)
         filters_param = _stringify_parameters('filters', filters)
         populate_param = _stringify_parameters('populate', populate)
         fields_param = _stringify_parameters('fields', fields)
-        pagination_param = _stringify_parameters('pagination', pagination)
+        pagination_param = _stringify_parameters('pagination', pagination) if not get_all else {}
         publication_state_param = _stringify_parameters('publicationState', publication_state)
         endpoint = plural_api_id
         params = {
