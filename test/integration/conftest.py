@@ -7,16 +7,33 @@ from test.types import AnyStrapiClient
 from test.utils.asyncutils import asvalue
 from pystrapi.strapi_client import StrapiClient
 from pystrapi.strapi_client_sync import StrapiClientSync
+import asyncio
 
 
-@pytest.fixture(params=[StrapiClientSync, StrapiClient])
+@pytest.fixture(scope='session')
+def event_loop() -> Any:
+    """
+    To fix ScopeMismatch error caused by scope='session'.
+    See https://stackoverflow.com/a/56238383/10727283
+    """
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
+
+
+strapi_clients = [StrapiClientSync, StrapiClient]
+
+
+@pytest.fixture(params=strapi_clients)
 def client(request: Any) -> AnyStrapiClient:
     client_type: Type[AnyStrapiClient] = request.param
     return client_type()
 
 
-@pytest.fixture
-async def auth_client(client: AnyStrapiClient) -> AnyStrapiClient:
+@pytest.fixture(scope='session', params=strapi_clients)
+async def auth_client(request: Any) -> AnyStrapiClient:
+    client_type: Type[AnyStrapiClient] = request.param
+    client = client_type()
     await asvalue(client.authorize(identifier='strapi1@test.com', password='strapi'))  # nosec
     return client
 
