@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.0](https://github.com/NoamNol/py-strapi/compare/v4.2.0...v4.3.0) (2022-07-04)
+
+
+### Features
+
+* add custom Strapi errors ([f9c748c](https://github.com/NoamNol/py-strapi/commit/f9c748c4c31af228f2e422bbebbd16e443932bc9))
+* add InternalServerError exception ([1f35dac](https://github.com/NoamNol/py-strapi/commit/1f35dacc1b9d0de35baa003796bf57525843e217))
+* change Connector interface to only include request() ([21c6c34](https://github.com/NoamNol/py-strapi/commit/21c6c346da7b4ec27a292656021c509b0f19811d))
+* don't export helpers from __init__ ([a9e8c9d](https://github.com/NoamNol/py-strapi/commit/a9e8c9df1e1c56d1bf3b9bfa1f0c208e4b647a6f))
+* raise custom RatelimitError ([4a4f82f](https://github.com/NoamNol/py-strapi/commit/4a4f82f3c9cd092b41e4838df3f5ce027278423f))
+* use raise_for_response in the default connectors ([e4cda98](https://github.com/NoamNol/py-strapi/commit/e4cda98be9a52c3cc324b5526c6ca05c9e453e63))
+
+
+### Bug Fixes
+
+* add data, error and message to StrapiAuthResponse ([0863153](https://github.com/NoamNol/py-strapi/commit/08631536220ee9b54b3283cd47f21ba6863d95f4))
+* pagination methods can not be mixed ([1bb3173](https://github.com/NoamNol/py-strapi/commit/1bb31737a3b14ce4fdc90dc548caa4e2d9c1c1f8))
+
 ## [4.2.0](https://github.com/NoamNol/py-strapi/compare/v4.1.0...v4.2.0) (2022-06-27)
 
 
