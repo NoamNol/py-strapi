@@ -2,7 +2,7 @@ import aiohttp
 from typing import List, Optional, Union
 
 from .errors import StrapiError
-from .helpers import _stringify_parameters
+from .help.helpers import _stringify_parameters
 from .parameters import PublicationState
 from .connector import ConnectorWrapper, DefaultConnector, Connector
 from .types import (
