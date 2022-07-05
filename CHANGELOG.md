@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.0](https://github.com/NoamNol/py-strapi/compare/v4.3.0...v4.4.0) (2022-07-05)
+
+
+### Features
+
+* don't parse response json if status code is ok ([cb38078](https://github.com/NoamNol/py-strapi/commit/cb38078fe955dacbc792037faf44fd3b0e5abaaf))
+
 ## [4.3.0](https://github.com/NoamNol/py-strapi/compare/v4.2.0...v4.3.0) (2022-07-04)
 
 
