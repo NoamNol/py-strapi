@@ -2,7 +2,7 @@ import requests
 from typing import List, Optional, Union
 
 from .errors import StrapiError
-from .helpers import _stringify_parameters
+from .help.helpers import _stringify_parameters
 from .parameters import PublicationState
 from .connector_sync import ConnectorWrapperSync, DefaultConnectorSync, ConnectorSync
 from .types import (

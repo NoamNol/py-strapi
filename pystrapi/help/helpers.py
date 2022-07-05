@@ -1,6 +1,6 @@
 from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
 
-from .errors import (
+from pystrapi.errors import (
     ForbiddenError,
     InternalServerError,
     NotFoundError,
@@ -8,7 +8,7 @@ from .errors import (
     StrapiError,
     ValidationError
 )
-from .types import (
+from pystrapi.types import (
     StrapiEntryOrEntriesResponse,
     StrapiResponseMessage,
     StrapiResponse,
@@ -84,7 +84,7 @@ def get_response_messages(response: StrapiResponse) -> List[StrapiResponseMessag
     return messages
 
 
-def raise_for_response(response: StrapiResponse, status_code: int, action: str) -> None:
+def raise_for_strapi_response(response: StrapiResponse, status_code: int, action: str) -> None:
     """Raise suitable Strapi exception if response status code is above (or equal to) 400."""
     if status_code < 400:
         return

@@ -5,7 +5,7 @@ from pydash.predicates import is_match  # type: ignore
 from test.types import AnyStrapiClient
 from test.utils.asyncutils import asvalue
 from pystrapi import errors
-from pystrapi.helpers import process_data
+from pystrapi.help.helpers import process_data
 from pystrapi.parameters import Filter
 from pystrapi.types import StrapiEntriesResponse, StrapiEntryResponse
 

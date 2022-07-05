@@ -2,9 +2,9 @@ from abc import abstractmethod
 from typing import Any, Protocol
 import requests
 
-from .errors import JsonParsingError, StrapiError
-from .helpers import raise_for_response
-from ._utils import getattr_safe
+from .errors import StrapiError
+from .help import requests_helpers
+from .help.helpers import raise_for_strapi_response
 
 
 class ConnectorSync(Protocol):
@@ -13,14 +13,6 @@ class ConnectorSync(Protocol):
         self, method: str, url: str, *, reqargs: dict = None, session: requests.Session = None
     ) -> requests.Response:
         """Send HTTP request and load response. Can do things like custom exceptions, logs and cache."""
-
-
-def _load_response_json(response: requests.Response, action: str) -> Any:
-    try:
-        return response.json()
-    except Exception as e:
-        text = getattr_safe(response, 'text', response.reason)
-        raise JsonParsingError(f'Unable to {action}, status code: {response.status_code}, response: {text}') from e
 
 
 class DefaultConnectorSync(ConnectorSync):
@@ -38,8 +30,7 @@ class DefaultConnectorSync(ConnectorSync):
                 response = requests.request(method=method, url=url, **reqargs)
         except Exception as e:
             raise StrapiError(f'Unable to {action}, error: {e})') from e
-        data = _load_response_json(response, action)
-        raise_for_response(data, response.status_code, action)
+        requests_helpers.raise_for_response(response, action)
         return response
 
 
@@ -64,8 +55,8 @@ class ConnectorWrapperSync:
         url = self.api_url + endpoint
         action = f'send {method} to {url}'
         response = self._connector.request(method, url, reqargs=reqargs, session=session)
-        data = _load_response_json(response, action)
-        raise_for_response(data, response.status_code, action)
+        data = requests_helpers.load_response_json(response, action)
+        raise_for_strapi_response(data, response.status_code, action)
         return data
 
     def get(self, endpoint: str, *, reqargs: dict = None, session: requests.Session = None) -> Any:
