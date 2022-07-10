@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.0](https://github.com/NoamNol/py-strapi/compare/v4.4.0...v4.5.0) (2022-07-10)
+
+
+### Features
+
+* export errors and helpers ([fef1c69](https://github.com/NoamNol/py-strapi/commit/fef1c69defc7c5beccdb18de6031da44f694357f))
+
 ## [4.4.0](https://github.com/NoamNol/py-strapi/compare/v4.3.0...v4.4.0) (2022-07-05)
 
 
